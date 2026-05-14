@@ -114,19 +114,19 @@ const CATEGORY_BRANDS: Record<string, BrandEntry[]> = {
 
 // ── Root catalog category definitions ────────────────────────────────────────
 
-const CATALOG_CATS: { name: string; desc: string }[] = [
-  { name: 'Llantas',           desc: 'Auto, camioneta, camión, moto, agrícola e industrial.' },
-  { name: 'Frenos',            desc: 'Balatas, discos, tambores y componentes hidráulicos.' },
-  { name: 'Filtros',           desc: 'Aceite, aire, gasolina, diésel y habitáculo.' },
-  { name: 'Suspensión',        desc: 'Amortiguadores, rótulas, terminales y bujes.' },
-  { name: 'Baleros',           desc: 'Rueda, motor, chumaceras y aplicaciones industriales.' },
-  { name: 'Clutch',            desc: 'Discos, prensas, collarines y kits completos.' },
-  { name: 'Bandas',            desc: 'Distribución, serpentín, poleas y tensores.' },
-  { name: 'Baterías',          desc: 'Acumuladores para todo tipo de vehículo.' },
-  { name: 'Aceites',           desc: 'Lubricantes y aditivos para motor y transmisión.' },
-  { name: 'Servicio pesado',   desc: 'Carga, diésel, frenos de aire y transmisión.' },
-  { name: 'Herramientas',      desc: 'Herramienta general y especializada para taller.' },
-  { name: 'Kits de afinación', desc: 'Bujías, filtros y aceite según aplicación.' },
+const CATALOG_CATS: { name: string; desc: string; img: string }[] = [
+  { name: 'Llantas',           desc: 'Auto, camioneta, camión, moto, agrícola e industrial.',  img: '/brands/llantas.png' },
+  { name: 'Frenos',            desc: 'Balatas, discos, tambores y componentes hidráulicos.',    img: '/brands/fritec.png' },
+  { name: 'Filtros',           desc: 'Aceite, aire, gasolina, diésel y habitáculo.',            img: '/brands/filtros-gonher.png' },
+  { name: 'Suspensión',        desc: 'Amortiguadores, rótulas, terminales y bujes.',            img: '/brands/suspension.png' },
+  { name: 'Baleros',           desc: 'Rueda, motor, chumaceras y aplicaciones industriales.',   img: '/brands/baleros.png' },
+  { name: 'Clutch',            desc: 'Discos, prensas, collarines y kits completos.',           img: '/brands/clutch.png' },
+  { name: 'Bandas',            desc: 'Distribución, serpentín, poleas y tensores.',             img: '/brands/bandas.png' },
+  { name: 'Baterías',          desc: 'Acumuladores para todo tipo de vehículo.',                img: '/brands/baterias.png' },
+  { name: 'Aceites',           desc: 'Lubricantes y aditivos para motor y transmisión.',        img: '/brands/mobil-delvac-cubeta.png' },
+  { name: 'Servicio pesado',   desc: 'Carga, diésel, frenos de aire y transmisión.',            img: '/brands/servicio_pesado.png' },
+  { name: 'Herramientas',      desc: 'Herramienta general y especializada para taller.',        img: '/brands/herramientas.png' },
+  { name: 'Kits de afinación', desc: 'Bujías, filtros y aceite según aplicación.',              img: '/brands/gonher-productos.png' },
 ]
 
 // ── Subcategory icon map (by slug) ────────────────────────────────────────────
@@ -143,7 +143,7 @@ const SUBCAT_ICONS: Record<string, LucideIcon> = {
 
 // ── Root catalog category card ────────────────────────────────────────────────
 
-function CatalogCatCard({ name, desc }: { name: string; desc: string }) {
+function CatalogCatCard({ name, desc, img }: { name: string; desc: string; img: string }) {
   const catNode  = getCategoryNode(name)
   const catItems = getCatalogByCategory(name)
   const to = catNode?.children?.length
@@ -155,21 +155,29 @@ function CatalogCatCard({ name, desc }: { name: string; desc: string }) {
   return (
     <Link
       to={to}
-      className="group bg-white border border-gray-200 hover:border-j-red rounded-xl p-5 transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 flex flex-col gap-4"
+      title={desc}
+      className="group bg-white border border-gray-200 hover:border-j-orange rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-0.5 flex flex-col"
     >
-      <div className="w-10 h-10 rounded-lg bg-j-red/10 group-hover:bg-j-red flex items-center justify-center transition-colors duration-200 flex-shrink-0">
-        <CategoryIcon
-          name={name}
-          size={20}
-          className="text-j-red group-hover:text-white transition-colors duration-200"
+      {/* Image area */}
+      <div className="relative h-40 bg-gradient-to-b from-white to-gray-50 flex items-center justify-center px-6 py-5 flex-shrink-0 overflow-hidden">
+        <div className="absolute top-0 left-0 right-0 h-0.5 bg-j-orange opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+        <img
+          src={img}
+          alt={name}
+          className="max-h-[120px] max-w-[85%] object-contain scale-[1.05] group-hover:scale-[1.12] transition-transform duration-300"
+          onError={(e) => {
+            e.currentTarget.style.display = 'none'
+            const fb = e.currentTarget.parentElement?.querySelector('.icon-fallback') as HTMLElement | null
+            if (fb) fb.style.removeProperty('display')
+          }}
         />
+        <span className="icon-fallback items-center justify-center" style={{ display: 'none' }}>
+          <CategoryIcon name={name} size={52} className="text-j-steel/30 group-hover:text-j-orange/60 transition-colors duration-200" />
+        </span>
       </div>
-      <div className="flex-1">
-        <p className="text-j-black font-bold text-sm leading-snug">{name}</p>
-        <p className="text-j-steel text-xs mt-1 leading-snug">{desc}</p>
-      </div>
-      <div className="flex items-center gap-1 text-j-red text-xs font-semibold">
-        Explorar <ArrowRight size={11} />
+      {/* Label */}
+      <div className="border-t border-gray-100 px-4 py-3 text-center">
+        <span className="text-j-black font-bold text-sm sm:text-base leading-snug block">{name}</span>
       </div>
     </Link>
   )
