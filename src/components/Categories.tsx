@@ -1,41 +1,26 @@
 import { Link } from 'react-router-dom'
 import { getCatalogByCategory, getCategoryNode } from '../data/publicCatalog'
-import {
-  CircleDot,
-  Disc3,
-  Filter,
-  Gauge,
-  Cog,
-  RotateCcw,
-  RotateCw,
-  Battery,
-  Droplets,
-  Wrench,
-  Package,
-  Truck,
-} from 'lucide-react'
-import type { LucideIcon } from 'lucide-react'
+import { CategoryIcon } from './CategoryIcons'
 
 interface Category {
-  Icon: LucideIcon
   name: string
   desc: string
   img?: string
 }
 
 const CATEGORIES: Category[] = [
-  { Icon: CircleDot, name: 'Llantas',          desc: 'Todas las medidas para auto, camioneta, carga y tractocamión.',         img: '/brands/llantas.png' },
-  { Icon: Disc3,     name: 'Frenos',            desc: 'Balatas, discos, tambores, cilindros y componentes hidráulicos.',       img: '/brands/fritec.png' },
-  { Icon: Filter,    name: 'Filtros',           desc: 'Aceite, aire, gasolina, diésel y habitáculo.',                         img: '/brands/filtros-gonher.png' },
-  { Icon: Gauge,     name: 'Suspensión',        desc: 'Amortiguadores, bases, rótulas, terminales y bujes.',                  img: '/brands/boge-transparent.png' },
-  { Icon: Cog,       name: 'Clutch',            desc: 'Discos, prensas, collarines y kits completos.',                        img: '/brands/clutch.png' },
-  { Icon: RotateCcw, name: 'Baleros',           desc: 'Baleros de rueda, motor, chumaceras y aplicaciones industriales.',     img: '/brands/baleros.png' },
-  { Icon: RotateCw,  name: 'Bandas',            desc: 'Distribución, serpentín, poleas, tensores y kits.',                    img: '/brands/bandas.png' },
-  { Icon: Battery,   name: 'Baterías',          desc: 'Acumuladores y soluciones eléctricas para tu vehículo.',               img: '/brands/baterias.png' },
-  { Icon: Droplets,  name: 'Aceites',           desc: 'Lubricantes, aditivos y productos de mantenimiento.',                  img: '/brands/mobil-delvac-cubeta.png' },
-  { Icon: Wrench,    name: 'Herramientas',      desc: 'Herramienta general y especializada para taller.',                     img: '/brands/herramientas.png' },
-  { Icon: Package,   name: 'Servicio pesado',   desc: 'Refacciones para carga, diésel, frenos de aire y transmisión.' },
-  { Icon: Truck,     name: 'Kits de afinación', desc: 'Bujías, filtros y aceite según aplicación de vehículo.',              img: '/brands/gonher-productos.png' },
+  { name: 'Llantas',          desc: 'Todas las medidas para auto, camioneta, carga y tractocamión.',    img: '/brands/llantas.png' },
+  { name: 'Frenos',           desc: 'Balatas, discos, tambores, cilindros y componentes hidráulicos.',  img: '/brands/fritec.png' },
+  { name: 'Filtros',          desc: 'Aceite, aire, gasolina, diésel y habitáculo.',                    img: '/brands/filtros-gonher.png' },
+  { name: 'Suspensión',       desc: 'Amortiguadores, bases, rótulas, terminales y bujes.',             img: '/brands/suspension.png' },
+  { name: 'Clutch',           desc: 'Discos, prensas, collarines y kits completos.',                   img: '/brands/clutch.png' },
+  { name: 'Baleros',          desc: 'Baleros de rueda, motor, chumaceras y aplicaciones industriales.',img: '/brands/baleros.png' },
+  { name: 'Bandas',           desc: 'Distribución, serpentín, poleas, tensores y kits.',               img: '/brands/bandas.png' },
+  { name: 'Baterías',         desc: 'Acumuladores y soluciones eléctricas para tu vehículo.',          img: '/brands/baterias.png' },
+  { name: 'Aceites',          desc: 'Lubricantes, aditivos y productos de mantenimiento.',             img: '/brands/mobil-delvac-cubeta.png' },
+  { name: 'Herramientas',     desc: 'Herramienta general y especializada para taller.',                img: '/brands/herramientas.png' },
+  { name: 'Servicio pesado',  desc: 'Refacciones para carga, diésel, frenos de aire y transmisión.',  img: '/brands/servicio_pesado.png' },
+  { name: 'Kits de afinación',desc: 'Bujías, filtros y aceite según aplicación de vehículo.',         img: '/brands/gonher-productos.png' },
 ]
 
 export default function Categories() {
@@ -51,7 +36,7 @@ export default function Categories() {
 
         {/* Grid — 2 / 3 / 4 cols */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-          {CATEGORIES.map(({ Icon, name, desc, img }) => {
+          {CATEGORIES.map(({ name, desc, img }) => {
             const catNode  = getCategoryNode(name)
             const catItems = getCatalogByCategory(name)
             const to = catNode?.children?.length
@@ -69,7 +54,7 @@ export default function Categories() {
               >
                 {/* Image / icon area */}
                 <div className="relative h-40 bg-gradient-to-b from-white to-gray-50 flex items-center justify-center px-6 py-5 flex-shrink-0 overflow-hidden">
-                  {/* Subtle top accent line on hover */}
+                  {/* Top accent line on hover */}
                   <div className="absolute top-0 left-0 right-0 h-0.5 bg-j-orange opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
 
                   {img ? (
@@ -89,7 +74,8 @@ export default function Categories() {
                     className="icon-fallback items-center justify-center"
                     style={{ display: img ? 'none' : 'flex' }}
                   >
-                    <Icon
+                    <CategoryIcon
+                      name={name}
                       size={52}
                       className="text-j-steel/30 group-hover:text-j-orange/60 transition-colors duration-200"
                     />

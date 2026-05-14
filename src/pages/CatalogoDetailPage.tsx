@@ -1,11 +1,31 @@
+import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { MessageCircle, ChevronRight } from 'lucide-react'
+import { MessageCircle, ChevronRight, X, ZoomIn } from 'lucide-react'
 import { getCatalogItemBySlug } from '../data/publicCatalog'
 import { WHATSAPP_NUMBER } from '../config'
 
 export default function CatalogoDetailPage() {
   const { categorySlug = '', itemSlug = '' } = useParams()
   const item = getCatalogItemBySlug(categorySlug, itemSlug)
+  const [lightbox, setLightbox] = useState(false)
+  const [visible, setVisible] = useState(false)
+
+  useEffect(() => {
+    if (lightbox) {
+      requestAnimationFrame(() => setVisible(true))
+      document.body.style.overflow = 'hidden'
+    } else {
+      setVisible(false)
+      document.body.style.overflow = ''
+    }
+    return () => { document.body.style.overflow = '' }
+  }, [lightbox])
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setLightbox(false) }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [])
 
   if (!item) {
     return (
@@ -24,6 +44,41 @@ export default function CatalogoDetailPage() {
 
   return (
     <div className="bg-j-gray min-h-screen">
+
+      {/* Lightbox */}
+      {lightbox && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-6 cursor-zoom-out"
+          style={{
+            background: 'rgba(0,0,0,0.85)',
+            backdropFilter: 'blur(8px)',
+            WebkitBackdropFilter: 'blur(8px)',
+            opacity: visible ? 1 : 0,
+            transition: 'opacity 0.3s cubic-bezier(0.4,0,0.2,1)',
+          }}
+          onClick={() => setLightbox(false)}
+        >
+          <img
+            src={item.image}
+            alt={item.title}
+            className="max-h-[85vh] max-w-[90vw] object-contain"
+            style={{
+              filter: 'drop-shadow(0 24px 60px rgba(0,0,0,0.6))',
+              transform: visible ? 'scale(1)' : 'scale(0.82)',
+              transition: 'transform 0.38s cubic-bezier(0.34,1.2,0.64,1), opacity 0.3s ease',
+              opacity: visible ? 1 : 0,
+            }}
+            onClick={(e) => e.stopPropagation()}
+          />
+          <button
+            onClick={() => setLightbox(false)}
+            className="absolute top-5 right-5 text-white/70 hover:text-white transition-colors"
+            aria-label="Cerrar"
+          >
+            <X size={28} />
+          </button>
+        </div>
+      )}
 
       {/* Breadcrumb */}
       <div className="bg-white border-b border-gray-200">
@@ -49,16 +104,48 @@ export default function CatalogoDetailPage() {
         <div className="grid lg:grid-cols-2 gap-10 items-start">
 
           {/* Image panel */}
-          <div className="bg-white border border-gray-200 rounded-xl flex items-center justify-center p-10 min-h-[280px]">
+          <div
+            className="relative rounded-2xl overflow-hidden min-h-[340px] flex items-center justify-center"
+            style={{ background: 'radial-gradient(ellipse at center, #dedad6 0%, #b8b3ae 100%)' }}
+          >
+            <div
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                backgroundImage: 'repeating-linear-gradient(-45deg, rgba(0,0,0,0.03) 0px, rgba(0,0,0,0.03) 1px, transparent 1px, transparent 36px)',
+              }}
+            />
             {item.image ? (
-              <img
-                src={item.image}
-                alt={item.title}
-                className="max-h-56 max-w-full object-contain"
-                onError={(e) => { e.currentTarget.style.display = 'none' }}
-              />
+              <button
+                onClick={() => setLightbox(true)}
+                className="group relative z-10 flex items-center justify-center cursor-zoom-in focus:outline-none"
+                aria-label="Ver imagen ampliada"
+              >
+                <img
+                  src={item.image}
+                  alt={item.title}
+                  className="max-h-64 max-w-[78%] object-contain transition-transform duration-300 group-hover:scale-105"
+                  style={{ filter: 'drop-shadow(0 8px 32px rgba(0,0,0,0.18))' }}
+                  onError={(e) => { e.currentTarget.style.display = 'none' }}
+                />
+                <span
+                  className="absolute bottom-3 right-3 flex items-center gap-1.5 text-black/40 text-[11px] font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                >
+                  <ZoomIn size={13} />
+                  Ampliar
+                </span>
+              </button>
             ) : (
-              <span className="text-j-steel/20 text-8xl font-black">{item.category[0]}</span>
+              <span className="text-black/10 text-9xl font-black select-none z-10">{item.category[0]}</span>
+            )}
+            {item.sku && (
+              <div className="absolute bottom-4 left-4 z-20">
+                <span
+                  className="text-black/40 text-xs font-mono px-3 py-1.5 rounded-lg"
+                  style={{ background: 'rgba(255,255,255,0.7)', border: '1px solid rgba(0,0,0,0.08)' }}
+                >
+                  SKU: {item.sku}
+                </span>
+              </div>
             )}
           </div>
 
@@ -76,9 +163,12 @@ export default function CatalogoDetailPage() {
               )}
             </div>
 
-            <h1 className="text-3xl font-black text-j-black mb-4 leading-tight">
+            <h1 className="text-3xl font-black text-j-black mb-2 leading-tight">
               {item.detailTitle}
             </h1>
+            {item.sku && (
+              <p className="text-j-steel/60 text-sm font-mono mb-4">SKU: {item.sku}</p>
+            )}
 
             <p className="text-j-steel text-base leading-relaxed mb-6">
               {item.detailDescription}
