@@ -1,27 +1,247 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+  <!-- Main pages -->
   <url>
     <loc>https://www.llantasjaime.com/</loc>
+    <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.llantasjaime.com/catalogo</loc>
+    <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
+
+  <!-- Category landing pages -->
   <url>
-    <loc>https://www.llantasjaime.com/catalogo/llantas</loc>
+    <loc>https://www.llantasjaime.com/catalogo?categoria=Llantas</loc>
+    <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.llantasjaime.com/catalogo/frenos</loc>
+    <loc>https://www.llantasjaime.com/catalogo?categoria=Frenos</loc>
+    <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.llantasjaime.com/catalogo/filtros</loc>
+    <loc>https://www.llantasjaime.com/catalogo?categoria=Filtros</loc>
+    <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.llantasjaime.com/catalogo/suspension</loc>
+    <loc>https://www.llantasjaime.com/catalogo?categoria=Suspensi%C3%B3n</loc>
+    <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
+  <url>
+    <loc>https://www.llantasjaime.com/catalogo?categoria=Clutch</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.llantasjaime.com/catalogo?categoria=Baleros</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.llantasjaime.com/catalogo?categoria=Bandas</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.llantasjaime.com/catalogo?categoria=Bater%C3%ADas</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.llantasjaime.com/catalogo?categoria=Aceites</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.llantasjaime.com/catalogo?categoria=Herramientas</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.llantasjaime.com/catalogo?categoria=Servicio%20pesado</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.llantasjaime.com/catalogo?categoria=Kits%20de%20afinaci%C3%B3n</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Product detail pages -->
+  <url>
+    <loc>https://www.llantasjaime.com/catalogo/suspension/amortiguadores-boge</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.llantasjaime.com/catalogo/filtros/gonher</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.llantasjaime.com/catalogo/llantas/tornel</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.llantasjaime.com/catalogo/frenos/balatas-fritec</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.llantasjaime.com/catalogo/baterias/lth</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.llantasjaime.com/catalogo/aceites/mobil-delvac</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.llantasjaime.com/catalogo/baleros/timken-ntn</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.llantasjaime.com/catalogo/bandas/gates</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.llantasjaime.com/catalogo/clutch/servicio-ligero</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Tire product pages -->
+  <url>
+    <loc>https://www.llantasjaime.com/catalogo/llanta-auto/21575r14-bridgestone-m773</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.llantasjaime.com/catalogo/llanta-auto/20570r14-cooper-cs1</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.llantasjaime.com/catalogo/llanta-auto/27x850r14-general-grabber</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.llantasjaime.com/catalogo/llanta-auto/17565r14-goodyear-assurance</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.llantasjaime.com/catalogo/llanta-auto/18570r13-goodyear-assurance</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.llantasjaime.com/catalogo/llanta-auto/18565r14-maximus-maxtrek</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.llantasjaime.com/catalogo/llanta-auto/18565r14-michelin-energy-xm2</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.llantasjaime.com/catalogo/llanta-auto/18570r13-michelin-energy-xm2</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.llantasjaime.com/catalogo/llanta-auto/18570r13-ovation-eco</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.llantasjaime.com/catalogo/llanta-auto/18565r14-ovation-v1-682</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.llantasjaime.com/catalogo/llanta-auto/195r14-tornel-america-cargo</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.llantasjaime.com/catalogo/llanta-auto/27x850r14-tornel-america-cargo</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.llantasjaime.com/catalogo/llanta-auto/18570r13-tornel-corona</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.llantasjaime.com/catalogo/llanta-auto/18560r14-tornel-real</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.llantasjaime.com/catalogo/llanta-auto/17570r13-tornel-turbo</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.llantasjaime.com/catalogo/llanta-auto/22570r14-cooper-cobra-radial</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.llantasjaime.com/catalogo/llanta-auto/19570r14-cooper-cs1</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.llantasjaime.com/catalogo/llanta-auto/27x850r14-euzkadi-avalancher</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.llantasjaime.com/catalogo/llanta-auto/18560r14-ovation-ecovision</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.llantasjaime.com/catalogo/llanta-auto/20570r14-tornel-at09</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.llantasjaime.com/catalogo/llanta-auto/21570r14-tornel-direccional</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.llantasjaime.com/catalogo/llantas-agricola/124r24-starmax-tr60</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.llantasjaime.com/catalogo/llantas-agricola/13624-armour</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.llantasjaime.com/catalogo/llantas-agricola/149r24-starmax-tr60</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
 </urlset>
