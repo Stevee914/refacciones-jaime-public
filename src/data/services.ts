@@ -21,7 +21,7 @@ export const SHOP_SERVICES: ShopService[] = [
     title: 'Reparación de mangueras hidráulicas',
     description:
       'Servicio para mangueras hidráulicas automotrices e industriales, ideal para trabajo pesado y maquinaria.',
-    image: '/services/mangueras-hidraulicas.png',
+    image: '/brands/mangueras.png',
   },
   {
     icon: Settings,
