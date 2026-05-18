@@ -40,14 +40,14 @@ export default function ServiciosPage() {
       </div>
 
       <div className="bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
-          <p className="text-j-red text-[10px] font-black tracking-[0.28em] uppercase mb-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
+          <p className="text-j-red text-[10px] font-black tracking-[0.28em] uppercase mb-2">
             Servicios
           </p>
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-j-black uppercase tracking-tight leading-tight mb-4">
-            Servicios automotrices<br className="hidden sm:block" /> y de trabajo pesado
+          <h1 className="text-2xl sm:text-3xl font-black text-j-black uppercase tracking-tight leading-tight mb-2">
+            Servicios automotrices y de trabajo pesado
           </h1>
-          <p className="text-j-steel text-base leading-relaxed max-w-2xl">
+          <p className="text-j-steel text-sm leading-relaxed max-w-2xl">
             En Refacciones y Llantas Jaime te apoyamos con servicios clave para mantener tu auto,
             camioneta, tractocamión o equipo trabajando correctamente.
           </p>
@@ -55,9 +55,9 @@ export default function ServiciosPage() {
       </div>
 
       {/* ── Services grid ── */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-10">
           {SHOP_SERVICES.map(svc => (
             <ServiceCard key={svc.title} {...svc} />
           ))}

@@ -12,7 +12,7 @@ export function ServiceCard({ icon: Icon, title, description, image }: ShopServi
       <div className="relative flex-shrink-0">
         <div className="absolute top-0 left-0 right-0 h-0.5 bg-j-red opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10" />
         {showImage ? (
-          <div className="h-44 bg-gradient-to-b from-gray-50 to-gray-100 overflow-hidden">
+          <div className="h-56 bg-gradient-to-b from-gray-50 to-gray-100 overflow-hidden">
             <img
               src={image}
               alt={title}
@@ -21,18 +21,18 @@ export function ServiceCard({ icon: Icon, title, description, image }: ShopServi
             />
           </div>
         ) : (
-          <div className="h-44 bg-j-gray flex items-center justify-center">
-            <div className="w-14 h-14 rounded-2xl bg-j-red/10 group-hover:bg-j-red/15 transition-colors duration-200 flex items-center justify-center">
-              <Icon size={28} className="text-j-red" />
+          <div className="h-56 bg-j-gray flex items-center justify-center">
+            <div className="w-16 h-16 rounded-2xl bg-j-red/10 group-hover:bg-j-red/15 transition-colors duration-200 flex items-center justify-center">
+              <Icon size={32} className="text-j-red" />
             </div>
           </div>
         )}
       </div>
 
       {/* Text */}
-      <div className="px-5 py-4 flex flex-col flex-1">
-        <h3 className="text-j-black font-bold text-sm leading-snug mb-2">{title}</h3>
-        <p className="text-j-steel text-xs leading-relaxed flex-1">{description}</p>
+      <div className="px-6 py-5 flex flex-col flex-1">
+        <h3 className="text-j-black font-bold text-base leading-snug mb-2">{title}</h3>
+        <p className="text-j-steel text-sm leading-relaxed flex-1">{description}</p>
       </div>
 
     </div>
