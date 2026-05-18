@@ -51,9 +51,12 @@ export default function Header() {
                 draggable={false}
               />
             </Link>
-            <div className="hidden lg:flex items-center border-l border-gray-200 pl-4">
-              <span className="text-[15px] font-semibold text-gray-800 whitespace-nowrap">
-                Refacciones y Llantas Jaime S.A. de C.V.
+            <div className="hidden lg:flex flex-col justify-center border-l border-gray-200 pl-4">
+              <span className="text-[15px] font-semibold text-gray-800 leading-tight whitespace-nowrap">
+                Refacciones y Llantas Jaime
+              </span>
+              <span className="text-[12px] text-j-steel leading-tight">
+                S.A. de C.V.
               </span>
             </div>
           </div>
