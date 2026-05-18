@@ -15,30 +15,41 @@ export default function Hero() {
     <section id="inicio" className="relative min-h-screen flex flex-col justify-center overflow-hidden">
 
       {/* ── Background ─────────────────────────────────────────────── */}
-      <div className="absolute inset-0 bg-j-black">
-        {/* Dot grid */}
+      <div className="absolute inset-0">
+        {/* Storefront photo */}
         <div
-          className="absolute inset-0 opacity-[0.03]"
+          className="absolute inset-0"
+          style={{
+            backgroundImage: 'url(/brands/fachada.png)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center 30%',
+            backgroundRepeat: 'no-repeat',
+          }}
+        />
+
+        {/* Mobile overlay — solid dark-red for text legibility */}
+        <div
+          className="absolute inset-0 sm:hidden"
+          style={{ background: 'rgba(140, 0, 0, 0.78)' }}
+        />
+
+        {/* Desktop gradient — strong red left, transparent right */}
+        <div
+          className="absolute inset-0 hidden sm:block"
+          style={{
+            background:
+              'linear-gradient(90deg, rgba(180,0,0,0.82) 0%, rgba(180,0,0,0.62) 34%, rgba(0,0,0,0.25) 58%, rgba(0,0,0,0.08) 100%)',
+          }}
+        />
+
+        {/* Dot grid — very subtle, doesn't compete with photo */}
+        <div
+          className="absolute inset-0 opacity-[0.012]"
           style={{
             backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)',
             backgroundSize: '32px 32px',
           }}
         />
-        {/* Orange bloom — right */}
-        <div className="absolute top-0 right-0 w-[700px] h-[700px] bg-j-orange/8 rounded-full blur-[150px] translate-x-1/3 -translate-y-1/4 pointer-events-none" />
-        {/* Red bloom — bottom left */}
-        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-j-red/6 rounded-full blur-[130px] -translate-x-1/4 translate-y-1/4 pointer-events-none" />
-        {/* Accent lines */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div
-            className="absolute top-0 h-full w-px bg-gradient-to-b from-transparent via-j-orange/12 to-transparent"
-            style={{ right: '22%' }}
-          />
-          <div
-            className="absolute top-0 h-full w-px bg-gradient-to-b from-transparent via-white/4 to-transparent"
-            style={{ right: '44%' }}
-          />
-        </div>
       </div>
 
       {/* ── Content ────────────────────────────────────────────────── */}
@@ -71,7 +82,7 @@ export default function Hero() {
           </h1>
 
           {/* Sub */}
-          <p className="text-j-steel text-lg sm:text-xl max-w-lg leading-relaxed mb-10">
+          <p className="text-white/80 text-lg sm:text-xl max-w-lg leading-relaxed mb-10">
             Más de 30 años surtiendo talleres y particulares en México.
             Catálogo de más de 30,000 refacciones, llantas y autopartes.
           </p>
@@ -101,7 +112,7 @@ export default function Hero() {
             {STATS.map(s => (
               <div key={s.label}>
                 <div className="text-3xl sm:text-4xl font-black text-j-orange leading-none">{s.value}</div>
-                <div className="text-j-steel text-sm mt-1.5">{s.label}</div>
+                <div className="text-white/60 text-sm mt-1.5">{s.label}</div>
               </div>
             ))}
           </div>
