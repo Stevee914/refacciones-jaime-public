@@ -35,6 +35,6 @@ export const SHOP_SERVICES: ShopService[] = [
     title: 'Rectificación de discos, tambores y volantas',
     description:
       'Rectificación de discos y tambores de freno, además de volantas de clutch para un mejor asentamiento y funcionamiento.',
-    image: '/services/rectificacion-discos-tambores.png',
+    image: '/brands/rectificacion_discos.png',
   },
 ]
