@@ -22,12 +22,12 @@ export const SHOP_SERVICES: ShopService[] = [
   },
   {
     icon: Wrench,
-    title: 'Reparación de mangueras hidráulicas',
+    title: 'Venta de conexiones y mangueras hidráulicas',
     description:
-      'Servicio para mangueras hidráulicas automotrices e industriales, ideal para trabajo pesado y maquinaria.',
+      'Mangueras hidráulicas nuevas a medida, con conexiones según aplicación. Servicio para maquinaria, trabajo pesado, uso automotriz e industrial.',
     image: '/brands/mangueras.png',
-    chips: ['Automotriz', 'Industrial', 'Trabajo pesado'],
-    waMessage: 'Hola, quiero cotizar reparación de mangueras hidráulicas.',
+    chips: ['Mangueras a medida', 'Conexiones', 'Trabajo pesado', 'Industrial'],
+    waMessage: 'Hola, quiero cotizar una manguera hidráulica o conexiones.',
   },
   {
     icon: Settings,
