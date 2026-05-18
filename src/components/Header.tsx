@@ -42,15 +42,25 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-[60px] lg:h-[72px]">
 
-          {/* Logo */}
-          <Link to="/" className="flex-shrink-0">
-            <img
-              src={LOGO_SRC}
-              alt="Refacciones y Llantas Jaime"
-              className="h-10 lg:h-14 w-auto object-contain"
-              draggable={false}
-            />
-          </Link>
+          {/* Logo + business name */}
+          <div className="flex items-center gap-4 flex-shrink-0">
+            <Link to="/">
+              <img
+                src={LOGO_SRC}
+                alt="Refacciones y Llantas Jaime"
+                className="h-10 lg:h-14 w-auto object-contain"
+                draggable={false}
+              />
+            </Link>
+            <div className="hidden lg:flex flex-col justify-center border-l border-gray-200 pl-4">
+              <span className="text-[15px] font-semibold text-gray-800 leading-tight whitespace-nowrap">
+                Refacciones y Llantas Jaime
+              </span>
+              <span className="text-[11px] text-j-steel leading-tight mt-0.5">
+                Auto · Camioneta · Tractocamión · Agrícola
+              </span>
+            </div>
+          </div>
 
           {/* Desktop nav */}
           <nav className="hidden sm:flex items-center gap-6 lg:gap-8">
