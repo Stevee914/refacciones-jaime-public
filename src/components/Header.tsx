@@ -1,10 +1,9 @@
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { Phone, MessageCircle, Menu, X } from 'lucide-react'
-import { WHATSAPP_NUMBER, WHATSAPP_MSG_DEFAULT, BUSINESS_PHONE } from '../config'
+import { Phone, Menu, X } from 'lucide-react'
+import { BUSINESS_PHONE } from '../config'
 
 const LOGO_SRC = '/brand/logo-refacciones-jaime.png'
-const WA_HREF  = `https://wa.me/${WHATSAPP_NUMBER}?text=${WHATSAPP_MSG_DEFAULT}`
 
 const NAV_LINKS = [
   { label: 'Inicio',    to: '/',          exact: true  },
@@ -66,9 +65,9 @@ export default function Header() {
             ))}
           </nav>
 
-          {/* Desktop right: phone + WhatsApp */}
-          <div className="hidden sm:flex items-center gap-3">
-            <div className="hidden lg:flex flex-col items-end mr-1">
+          {/* Desktop right: phone */}
+          <div className="hidden sm:flex items-center">
+            <div className="flex flex-col items-end">
               <span className="text-[10px] text-j-steel uppercase tracking-wider">Llámanos</span>
               <a
                 href="tel:+524474782074"
@@ -78,28 +77,10 @@ export default function Header() {
                 {BUSINESS_PHONE}
               </a>
             </div>
-            <a
-              href={WA_HREF}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 bg-j-red hover:bg-j-red-deep text-white text-sm font-bold px-4 py-2 rounded transition-colors"
-            >
-              <MessageCircle size={14} />
-              WhatsApp
-            </a>
           </div>
 
-          {/* Mobile right: WhatsApp + hamburger */}
-          <div className="flex sm:hidden items-center gap-2">
-            <a
-              href={WA_HREF}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 bg-j-red hover:bg-j-red-deep text-white text-sm font-bold px-3 py-2 rounded transition-colors"
-            >
-              <MessageCircle size={14} />
-              WhatsApp
-            </a>
+          {/* Mobile right: hamburger */}
+          <div className="flex sm:hidden items-center">
             <button
               onClick={() => setOpen(o => !o)}
               className="p-2 text-j-steel hover:text-j-black transition-colors"
