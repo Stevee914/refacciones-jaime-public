@@ -51,7 +51,7 @@ export default function Header() {
               WhatsApp
             </a>
 
-            {/* Catálogo shortcut — mobile */}
+            {/* Catálogo shortcut — mobile only */}
             <Link
               to="/catalogo"
               className="sm:hidden text-j-steel hover:text-j-black text-sm border border-gray-300 hover:border-gray-400 px-3 py-2 rounded transition-colors font-medium"
@@ -59,12 +59,18 @@ export default function Header() {
               Catálogo
             </Link>
 
-            {/* Catálogo — desktop */}
+            {/* Catálogo + Servicios — sm and up */}
             <Link
               to="/catalogo"
               className="hidden sm:block text-j-steel hover:text-j-black text-sm border border-gray-300 hover:border-gray-400 px-3 py-2 rounded transition-colors font-medium"
             >
               Catálogo
+            </Link>
+            <Link
+              to="/servicios"
+              className="hidden sm:block text-j-steel hover:text-j-black text-sm border border-gray-300 hover:border-gray-400 px-3 py-2 rounded transition-colors font-medium"
+            >
+              Servicios
             </Link>
           </div>
 
