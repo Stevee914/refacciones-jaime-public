@@ -16,7 +16,7 @@ export const SHOP_SERVICES: ShopService[] = [
     title: 'Montaje y balance de llantas',
     description:
       'Montaje y balanceo para auto, camioneta, tractocamión, agrícola e industrial. Asesoría para elegir la medida y marca correcta.',
-    image: '/services/llantas-instalacion.png',
+    image: '/brands/instalacion_llantas.png',
     chips: ['Auto', 'Camioneta', 'Tractocamión', 'Agrícola'],
     waMessage: 'Hola, quiero cotizar montaje y balance de llantas.',
   },
