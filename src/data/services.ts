@@ -13,12 +13,12 @@ export interface ShopService {
 export const SHOP_SERVICES: ShopService[] = [
   {
     icon: CircleDot,
-    title: 'Montaje y balance de llantas',
+    title: 'Montaje y balanceo de llantas',
     description:
       'Montaje y balanceo para auto y camioneta. Asesoría para elegir la medida y marca correcta.',
     image: '/brands/instalacion_llantas.png',
     chips: ['Auto', 'Camioneta'],
-    waMessage: 'Hola, quiero cotizar montaje y balance de llantas.',
+    waMessage: 'Hola, quiero cotizar montaje y balanceo de llantas.',
   },
   {
     icon: Wrench,
@@ -34,7 +34,7 @@ export const SHOP_SERVICES: ShopService[] = [
     title: 'Cambio de baleros, bujes y rótulas',
     description:
       'Reemplazo de componentes de suspensión, dirección y rodamiento para mejorar seguridad y desempeño.',
-    image: '/services/baleros-bujes-rotulas.png',
+    image: '/brands/cambio_baleros.png',
     chips: ['Suspensión', 'Dirección', 'Rodamiento'],
     waMessage: 'Hola, quiero cotizar cambio de baleros, bujes o rótulas.',
   },
