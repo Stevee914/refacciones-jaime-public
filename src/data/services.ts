@@ -13,12 +13,12 @@ export interface ShopService {
 export const SHOP_SERVICES: ShopService[] = [
   {
     icon: CircleDot,
-    title: 'Venta e instalación de llantas',
+    title: 'Montaje y balance de llantas',
     description:
-      'Llantas para auto, camioneta, tractocamión, agrícola e industrial, con apoyo para selección e instalación.',
+      'Montaje y balanceo para auto, camioneta, tractocamión, agrícola e industrial. Asesoría para elegir la medida y marca correcta.',
     image: '/services/llantas-instalacion.png',
     chips: ['Auto', 'Camioneta', 'Tractocamión', 'Agrícola'],
-    waMessage: 'Hola, quiero cotizar venta e instalación de llantas.',
+    waMessage: 'Hola, quiero cotizar montaje y balance de llantas.',
   },
   {
     icon: Wrench,
