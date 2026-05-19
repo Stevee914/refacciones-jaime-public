@@ -136,10 +136,10 @@ export default function PromoBanner() {
         </h1>
 
         <p
-          className="text-white/60 text-[11px] sm:text-xs font-bold tracking-[0.22em] uppercase mb-3"
+          className="text-white/60 text-[11px] sm:text-xs font-bold tracking-[0.1em] sm:tracking-[0.22em] uppercase mb-3 leading-snug"
           style={enter(160)}
         >
-          Auto&nbsp;&nbsp;·&nbsp;&nbsp;Camioneta&nbsp;&nbsp;·&nbsp;&nbsp;Tractocamión&nbsp;&nbsp;·&nbsp;&nbsp;Agrícola
+          Auto · Camioneta · Tractocamión · Agrícola
         </p>
 
         <p
