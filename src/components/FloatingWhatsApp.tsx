@@ -11,7 +11,7 @@ export default function FloatingWhatsApp() {
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Cotizar por WhatsApp"
-      className="fixed bottom-5 right-5 sm:bottom-6 sm:right-6 z-50 flex items-center gap-3 group"
+      className="fixed bottom-8 right-5 sm:bottom-6 sm:right-6 z-50 flex items-center gap-3 group"
     >
       {/* Desktop label */}
       <span className="hidden sm:block bg-white text-[13px] font-semibold text-gray-800 shadow-md px-3.5 py-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none">

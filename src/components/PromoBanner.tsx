@@ -23,6 +23,34 @@ export default function PromoBanner() {
           Keeping the animation on a child avoids the inline-transform /
           animation-fill-mode conflict that would cancel one or the other.
       */}
+      {/*
+        ── Mobile: fachada full-bleed + top→bottom gradient ──────────────
+        Visible only below lg. Image covers the full section; the gradient
+        keeps the red brand colour strong at the top (text area) and fades
+        to a lighter tint at the bottom so the building reads through.
+      */}
+      <div className="lg:hidden absolute inset-0 pointer-events-none">
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage:    "url('/brands/fachada.png')",
+            backgroundSize:     'cover',
+            backgroundPosition: 'center 30%',
+            backgroundRepeat:   'no-repeat',
+            opacity: 0.9,
+          }}
+        />
+        <div
+          className="absolute inset-0"
+          style={{
+            background: 'linear-gradient(to bottom, rgba(180,0,0,0.88) 0%, rgba(180,0,0,0.72) 45%, rgba(100,0,0,0.45) 100%)',
+          }}
+        />
+      </div>
+
+      {/*
+        ── Desktop Layer 1: Facade image ─────────────────────────────────
+      */}
       <div
         className="hidden lg:block absolute inset-0 pointer-events-none"
         style={{ transform: 'translateX(8%)' }}
@@ -40,19 +68,15 @@ export default function PromoBanner() {
       </div>
 
       {/*
-        ── Layer 2: Left→right gradient ──────────────────────────────────
-        Spans the entire hero width (inset-0). No panel boundary.
-        Left column: solid brand red — headline stays perfectly readable.
-        Middle: soft fade through semi-transparent red.
-        Right: very light tint so the facade reads clearly.
+        ── Desktop Layer 2: Left→right gradient ──────────────────────────
       */}
       <div
         className="hidden lg:block absolute inset-0 pointer-events-none"
         style={{
           background: [
             'linear-gradient(90deg,',
-            '  #E1251B          0%,',   /* solid red */
-            '  #E1251B         42%,',   /* solid red — covers full text column */
+            '  #E1251B          0%,',
+            '  #E1251B         42%,',
             '  rgba(225,37,27,0.82) 56%,',
             '  rgba(225,37,27,0.35) 70%,',
             '  rgba(225,37,27,0.08) 84%,',

@@ -77,7 +77,7 @@ export function ServiceFeatureBlock({ icon: Icon, title, description, image, chi
   )
 
   return (
-    <div className="group py-10 lg:py-14 border-b border-gray-100 last:border-b-0">
+    <div className="group py-6 lg:py-14 border-b border-gray-100 last:border-b-0">
       <div
         className={`flex flex-col lg:flex-row items-center gap-10 lg:gap-16 ${
           reversed ? 'lg:flex-row-reverse' : ''
