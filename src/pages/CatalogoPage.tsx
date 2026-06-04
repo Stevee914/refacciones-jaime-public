@@ -146,11 +146,14 @@ const SUBCAT_ICONS: Record<string, LucideIcon> = {
 function CatalogCatCard({ name, desc, img }: { name: string; desc: string; img: string }) {
   const catNode  = getCategoryNode(name)
   const catItems = getCatalogByCategory(name)
-  const to = catNode?.children?.length
-    ? `/catalogo?categoria=${encodeURIComponent(name)}`
-    : catItems.length === 1
-      ? `/catalogo/${catItems[0].categorySlug}/${catItems[0].slug}`
-      : `/catalogo?categoria=${encodeURIComponent(name)}`
+  // Llantas has its own dedicated page with live data
+  const to = name === 'Llantas'
+    ? '/llantas'
+    : catNode?.children?.length
+      ? `/catalogo?categoria=${encodeURIComponent(name)}`
+      : catItems.length === 1
+        ? `/catalogo/${catItems[0].categorySlug}/${catItems[0].slug}`
+        : `/catalogo?categoria=${encodeURIComponent(name)}`
 
   return (
     <Link

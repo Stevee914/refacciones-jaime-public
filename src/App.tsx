@@ -4,6 +4,7 @@ import HomePage from './pages/HomePage'
 import CatalogoPage from './pages/CatalogoPage'
 import CatalogoDetailPage from './pages/CatalogoDetailPage'
 import ServiciosPage from './pages/ServiciosPage'
+import LlantasPage from './pages/LlantasPage'
 
 const router = createBrowserRouter([
   {
@@ -13,6 +14,7 @@ const router = createBrowserRouter([
       { index: true, element: <HomePage /> },
       { path: 'catalogo', element: <CatalogoPage /> },
       { path: 'catalogo/:categorySlug/:itemSlug', element: <CatalogoDetailPage /> },
+      { path: 'llantas', element: <LlantasPage /> },
       { path: 'servicios', element: <ServiciosPage /> },
     ],
   },
