@@ -266,6 +266,8 @@ function SubcatCard({ sub }: { sub: SubcategoryCard }) {
 
 function ProductCard({ item }: { item: typeof CATALOG_ITEMS[0] }) {
   const waHref = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(item.quotePrompt)}`
+  const [imgFailed, setImgFailed] = useState(false)
+  const showImg = !!item.image && !imgFailed
 
   return (
     <div className="group bg-white border border-gray-200 hover:border-j-orange rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-200 flex flex-col">
@@ -281,13 +283,13 @@ function ProductCard({ item }: { item: typeof CATALOG_ITEMS[0] }) {
             backgroundImage: 'repeating-linear-gradient(-45deg, rgba(0,0,0,0.03) 0px, rgba(0,0,0,0.03) 1px, transparent 1px, transparent 36px)',
           }}
         />
-        {item.image ? (
+        {showImg ? (
           <img
             src={item.image}
             alt={item.title}
             className="relative z-10 max-h-56 max-w-[85%] object-contain group-hover:scale-105 transition-transform duration-300"
             style={{ filter: 'drop-shadow(0 4px 20px rgba(0,0,0,0.18))' }}
-            onError={(e) => { e.currentTarget.style.display = 'none' }}
+            onError={() => setImgFailed(true)}
           />
         ) : (
           <div className="flex flex-col items-center gap-2 z-10">
@@ -662,7 +664,7 @@ export default function CatalogoPage() {
         .filter(i => !brandFilter || i.brand === brandFilter)
         .filter(i => !sizeQuery.trim() || i.title.toLowerCase().includes(sizeQuery.toLowerCase()))
     : []
-  const showFilters = !!(categoria && !q && filtered && filtered.length > 1 && allBrands.length > 1)
+  const showFilters = !!(categoria && !q && filtered && filtered.length > 0)
 
   return (
     <div className="bg-j-gray min-h-screen">

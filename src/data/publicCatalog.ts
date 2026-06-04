@@ -54,7 +54,7 @@ export const CATEGORY_TREE: CategoryNode[] = [
         slug: 'llanta-auto',
         description: 'Llantas para autos compactos, sedanes y uso diario.',
         quotePrompt: 'Hola, vengo de refaccionesjaime.com. Quiero cotizar llantas para auto. Medida: ',
-        link: '/catalogo?categoria=Llanta+auto',
+        link: '/catalogo?categoria=Llanta%20auto',
       },
       {
         name: 'Llanta camión',
@@ -67,7 +67,7 @@ export const CATEGORY_TREE: CategoryNode[] = [
         slug: 'llanta-agricola',
         description: 'Medidas agrícolas para trabajo pesado y campo.',
         quotePrompt: 'Hola, vengo de refaccionesjaime.com. Quiero cotizar llantas agrícolas. Medida o aplicación: ',
-        link: '/catalogo?categoria=Llanta+agr%C3%ADcola',
+        link: '/catalogo?categoria=Llanta%20agr%C3%ADcola',
       },
       {
         name: 'Llanta moto',
