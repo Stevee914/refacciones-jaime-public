@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useSearchParams, Link, useNavigate } from 'react-router-dom'
 import {
   MessageCircle, ArrowRight, ChevronRight,
@@ -147,9 +147,7 @@ function CatalogCatCard({ name, desc, img }: { name: string; desc: string; img: 
   const catNode  = getCategoryNode(name)
   const catItems = getCatalogByCategory(name)
   // Llantas has its own dedicated page with live data
-  const to = name === 'Llantas'
-    ? '/llantas'
-    : catNode?.children?.length
+  const to = catNode?.children?.length
       ? `/catalogo?categoria=${encodeURIComponent(name)}`
       : catItems.length === 1
         ? `/catalogo/${catItems[0].categorySlug}/${catItems[0].slug}`
@@ -222,31 +220,31 @@ function ItemCard({ item }: { item: typeof CATALOG_ITEMS[0] }) {
 
 function SubcatCard({ sub }: { sub: SubcategoryCard }) {
   const Icon = SUBCAT_ICONS[sub.slug] ?? CircleDot
-  const cardClass = "bg-white border border-gray-200 rounded-xl overflow-hidden flex flex-col"
+  const cardClass = "bg-white border border-gray-200 rounded-2xl overflow-hidden flex flex-col"
   const inner = (
     <>
-      {sub.image ? (
-        <div className="h-36 bg-gradient-to-b from-white to-gray-50 flex items-center justify-center px-5 py-4 flex-shrink-0">
+      {/* Icon / image area */}
+      <div className="h-44 bg-gradient-to-b from-gray-50 to-gray-100 flex items-center justify-center flex-shrink-0 relative">
+        <div className="absolute top-0 left-0 right-0 h-0.5 bg-j-red opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+        {sub.image ? (
           <img
             src={sub.image}
             alt={sub.name}
-            className="max-h-full max-w-[85%] object-contain"
+            className="max-h-[140px] max-w-[80%] object-contain"
             onError={(e) => { e.currentTarget.style.display = 'none' }}
           />
-        </div>
-      ) : (
-        <div className="px-5 pt-5 pb-0">
-          <div className="w-11 h-11 rounded-xl bg-j-red/10 flex items-center justify-center mb-4 flex-shrink-0">
-            <Icon size={22} className="text-j-red" />
+        ) : (
+          <div className="w-16 h-16 rounded-2xl bg-j-red/10 group-hover:bg-j-red/15 transition-colors flex items-center justify-center">
+            <Icon size={32} className="text-j-red" />
           </div>
-        </div>
-      )}
-      <div className="px-5 pb-4 pt-3 flex flex-col flex-1">
-        <p className="text-j-black font-bold text-sm leading-snug mb-1.5">{sub.name}</p>
-        <p className="text-j-steel text-xs leading-relaxed flex-1">{sub.description}</p>
+        )}
+      </div>
+      <div className="px-5 py-4 flex flex-col flex-1">
+        <p className="text-j-black font-black text-base leading-snug mb-1.5">{sub.name}</p>
+        <p className="text-j-steel text-sm leading-relaxed flex-1">{sub.description}</p>
         {sub.link && (
-          <div className="flex items-center gap-1 mt-3 text-j-red text-xs font-semibold">
-            Ver productos <ArrowRight size={11} />
+          <div className="flex items-center gap-1 mt-4 text-j-red text-sm font-bold">
+            Ver productos <ArrowRight size={13} />
           </div>
         )}
       </div>
@@ -261,7 +259,7 @@ function SubcatCard({ sub }: { sub: SubcategoryCard }) {
     )
   }
 
-  return <div className={cardClass}>{inner}</div>
+  return <div className={cardClass + " group"}>{inner}</div>
 }
 
 // ── Premium product card (category-filtered view) ─────────────────────────────
@@ -346,6 +344,15 @@ export default function CatalogoPage() {
   const hasCategoryChildren = !!(catNode?.children?.length)
   const subNode             = (sub && catNode) ? catNode.children?.find(c => c.slug === sub) : undefined
   const hasSubFilter        = !!(categoria && sub && subNode)
+
+  const [brandFilter, setBrandFilter] = useState<string | null>(null)
+  const [sizeQuery,   setSizeQuery  ] = useState('')
+
+  // Reset filters when category changes
+  useEffect(() => {
+    setBrandFilter(null)
+    setSizeQuery('')
+  }, [categoria])
 
   useEffect(() => {
     if (hasCategoryChildren) return
@@ -576,7 +583,7 @@ export default function CatalogoPage() {
           </p>
 
           {/* Subcategory card grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {catNode.children!.map(sub => (
               <SubcatCard key={sub.slug} sub={sub} />
             ))}
@@ -697,12 +704,79 @@ export default function CatalogoPage() {
           </div>
         )}
 
-        {/* Category-filtered product grid — premium cards with dual CTA */}
-        {categoria && !q && isFiltered && filtered!.length > 1 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {filtered!.map(item => <ProductCard key={item.id} item={item} />)}
-          </div>
-        )}
+        {/* Category-filtered product grid with brand + size filters */}
+        {categoria && !q && isFiltered && filtered!.length > 1 && (() => {
+          const brands = Array.from(new Set(filtered!.map(i => i.brand).filter(Boolean))).sort() as string[]
+          const display = filtered!
+            .filter(i => !brandFilter || i.brand === brandFilter)
+            .filter(i => !sizeQuery.trim() || i.title.toLowerCase().includes(sizeQuery.toLowerCase()))
+
+          return (
+            <>
+              {/* Filters */}
+              {brands.length > 1 && (
+                <div className="mb-5 space-y-3">
+                  {/* Brand chips */}
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      onClick={() => setBrandFilter(null)}
+                      className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-colors ${
+                        !brandFilter
+                          ? 'bg-j-red text-white border-j-red'
+                          : 'bg-white text-j-steel border-gray-300 hover:border-j-red hover:text-j-red'
+                      }`}
+                    >
+                      Todas las marcas
+                    </button>
+                    {brands.map(b => (
+                      <button
+                        key={b}
+                        onClick={() => setBrandFilter(brandFilter === b ? null : b)}
+                        className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-colors ${
+                          brandFilter === b
+                            ? 'bg-j-red text-white border-j-red'
+                            : 'bg-white text-j-steel border-gray-300 hover:border-j-red hover:text-j-red'
+                        }`}
+                      >
+                        {b}
+                      </button>
+                    ))}
+                  </div>
+                  {/* Size search */}
+                  <div className="flex items-center gap-2 max-w-xs">
+                    <input
+                      type="search"
+                      value={sizeQuery}
+                      onChange={e => setSizeQuery(e.target.value)}
+                      placeholder="Buscar por medida: 185/70R13..."
+                      className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm text-j-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-j-red/30 focus:border-j-red bg-white"
+                    />
+                    {sizeQuery && (
+                      <button onClick={() => setSizeQuery('')} className="text-xs text-j-steel hover:text-j-black font-medium">
+                        Limpiar
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Results */}
+              {display.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                  {display.map(item => <ProductCard key={item.id} item={item} />)}
+                </div>
+              ) : (
+                <div className="bg-white border border-gray-200 rounded-xl px-6 py-10 text-center">
+                  <p className="text-j-black font-bold text-base mb-2">Sin resultados</p>
+                  <p className="text-j-steel text-sm mb-4">Intenta otra medida o consulta por WhatsApp.</p>
+                  <button onClick={() => { setBrandFilter(null); setSizeQuery('') }} className="text-j-red text-sm font-semibold hover:underline">
+                    Ver todos
+                  </button>
+                </div>
+              )}
+            </>
+          )
+        })()}
 
         {/* Search results — compact cards */}
         {q && isFiltered && filtered!.length > 1 && (
