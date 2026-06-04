@@ -870,39 +870,27 @@ export default function CatalogoPage() {
           </div>
         )}
 
-        {/* Filters: brand chips + dimension dropdowns */}
+        {/* Filters: dropdowns for brand + dimensions */}
         {showFilters && (
-          <div className="bg-white border border-gray-200 rounded-xl px-4 py-4 mb-5 space-y-3">
+          <div className="bg-white border border-gray-200 rounded-xl px-4 py-4 mb-5">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-xs font-bold text-j-steel uppercase tracking-wider">Filtrar:</span>
 
-            {/* Brand chips */}
-            {allBrands.length > 1 && (
-              <div className="flex flex-wrap gap-2">
-                <button
-                  onClick={() => setBrandFilter(null)}
-                  className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-colors ${
-                    !brandFilter ? 'bg-j-red text-white border-j-red' : 'bg-white text-j-steel border-gray-300 hover:border-j-red hover:text-j-red'
-                  }`}
+              {/* Brand dropdown */}
+              {allBrands.length > 1 && (
+                <select
+                  value={brandFilter ?? ''}
+                  onChange={e => setBrandFilter(e.target.value || null)}
+                  className="border border-gray-300 rounded-lg px-3 py-2 text-sm text-j-black focus:outline-none focus:ring-2 focus:ring-j-red/30 focus:border-j-red bg-white"
                 >
-                  Todas las marcas
-                </button>
-                {allBrands.map(b => (
-                  <button
-                    key={b}
-                    onClick={() => setBrandFilter(brandFilter === b ? null : b)}
-                    className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-colors ${
-                      brandFilter === b ? 'bg-j-red text-white border-j-red' : 'bg-white text-j-steel border-gray-300 hover:border-j-red hover:text-j-red'
-                    }`}
-                  >
-                    {b}
-                  </button>
-                ))}
-              </div>
-            )}
+                  <option value="">Marca</option>
+                  {allBrands.map(b => <option key={b} value={b}>{b}</option>)}
+                </select>
+              )}
 
             {/* Dimension selects */}
             {allAnchos.length > 0 && (
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="text-xs font-bold text-j-steel uppercase tracking-wider">Medida:</span>
+              <>
 
                 <select
                   value={anchoFilter}
@@ -938,11 +926,12 @@ export default function CatalogoPage() {
                     onClick={() => { setBrandFilter(null); setAnchoFilter(''); setAltoFilter(''); setRinFilter('') }}
                     className="text-xs text-j-red font-semibold hover:underline"
                   >
-                    Limpiar filtros
+                    Limpiar
                   </button>
                 )}
-              </div>
+              </>
             )}
+            </div>
           </div>
         )}
 
