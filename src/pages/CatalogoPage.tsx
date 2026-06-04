@@ -290,7 +290,10 @@ function ProductCard({ item }: { item: typeof CATALOG_ITEMS[0] }) {
             onError={(e) => { e.currentTarget.style.display = 'none' }}
           />
         ) : (
-          <span className="text-black/10 text-7xl font-black select-none z-10">T</span>
+          <div className="flex flex-col items-center gap-2 z-10">
+            <CircleDot size={48} className="text-white/20" />
+            <span className="text-white/40 text-xs font-semibold uppercase tracking-wider">Sin imagen</span>
+          </div>
         )}
         {/* Category badge */}
         <span className="absolute top-3 left-3 z-20 bg-j-orange text-white text-[9px] font-black tracking-widest uppercase px-2.5 py-1 rounded-full">
@@ -650,6 +653,17 @@ export default function CatalogoPage() {
 
   // ── Standard catalog view ─────────────────────────────────────────────────────
 
+  // Brand + size filter values (used when categoria is set and products > 1)
+  const allBrands = filtered
+    ? (Array.from(new Set(filtered.map(i => i.brand).filter(Boolean))).sort() as string[])
+    : []
+  const displayItems = filtered
+    ? filtered
+        .filter(i => !brandFilter || i.brand === brandFilter)
+        .filter(i => !sizeQuery.trim() || i.title.toLowerCase().includes(sizeQuery.toLowerCase()))
+    : []
+  const showFilters = !!(categoria && !q && filtered && filtered.length > 1 && allBrands.length > 1)
+
   return (
     <div className="bg-j-gray min-h-screen">
 
@@ -704,79 +718,70 @@ export default function CatalogoPage() {
           </div>
         )}
 
-        {/* Category-filtered product grid with brand + size filters */}
-        {categoria && !q && isFiltered && filtered!.length > 1 && (() => {
-          const brands = Array.from(new Set(filtered!.map(i => i.brand).filter(Boolean))).sort() as string[]
-          const display = filtered!
-            .filter(i => !brandFilter || i.brand === brandFilter)
-            .filter(i => !sizeQuery.trim() || i.title.toLowerCase().includes(sizeQuery.toLowerCase()))
-
-          return (
-            <>
-              {/* Filters */}
-              {brands.length > 1 && (
-                <div className="mb-5 space-y-3">
-                  {/* Brand chips */}
-                  <div className="flex flex-wrap gap-2">
-                    <button
-                      onClick={() => setBrandFilter(null)}
-                      className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-colors ${
-                        !brandFilter
-                          ? 'bg-j-red text-white border-j-red'
-                          : 'bg-white text-j-steel border-gray-300 hover:border-j-red hover:text-j-red'
-                      }`}
-                    >
-                      Todas las marcas
-                    </button>
-                    {brands.map(b => (
-                      <button
-                        key={b}
-                        onClick={() => setBrandFilter(brandFilter === b ? null : b)}
-                        className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-colors ${
-                          brandFilter === b
-                            ? 'bg-j-red text-white border-j-red'
-                            : 'bg-white text-j-steel border-gray-300 hover:border-j-red hover:text-j-red'
-                        }`}
-                      >
-                        {b}
-                      </button>
-                    ))}
-                  </div>
-                  {/* Size search */}
-                  <div className="flex items-center gap-2 max-w-xs">
-                    <input
-                      type="search"
-                      value={sizeQuery}
-                      onChange={e => setSizeQuery(e.target.value)}
-                      placeholder="Buscar por medida: 185/70R13..."
-                      className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm text-j-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-j-red/30 focus:border-j-red bg-white"
-                    />
-                    {sizeQuery && (
-                      <button onClick={() => setSizeQuery('')} className="text-xs text-j-steel hover:text-j-black font-medium">
-                        Limpiar
-                      </button>
-                    )}
-                  </div>
-                </div>
+        {/* Brand + size filters */}
+        {showFilters && (
+          <div className="mb-5 space-y-3">
+            <div className="flex flex-wrap gap-2">
+              <button
+                onClick={() => setBrandFilter(null)}
+                className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-colors ${
+                  !brandFilter
+                    ? 'bg-j-red text-white border-j-red'
+                    : 'bg-white text-j-steel border-gray-300 hover:border-j-red hover:text-j-red'
+                }`}
+              >
+                Todas las marcas
+              </button>
+              {allBrands.map(b => (
+                <button
+                  key={b}
+                  onClick={() => setBrandFilter(brandFilter === b ? null : b)}
+                  className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-colors ${
+                    brandFilter === b
+                      ? 'bg-j-red text-white border-j-red'
+                      : 'bg-white text-j-steel border-gray-300 hover:border-j-red hover:text-j-red'
+                  }`}
+                >
+                  {b}
+                </button>
+              ))}
+            </div>
+            <div className="flex items-center gap-2 max-w-xs">
+              <input
+                type="search"
+                value={sizeQuery}
+                onChange={e => setSizeQuery(e.target.value)}
+                placeholder="Buscar por medida: 185/70R13..."
+                className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm text-j-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-j-red/30 focus:border-j-red bg-white"
+              />
+              {sizeQuery && (
+                <button onClick={() => setSizeQuery('')} className="text-xs text-j-steel hover:text-j-black font-medium">
+                  Limpiar
+                </button>
               )}
+            </div>
+          </div>
+        )}
 
-              {/* Results */}
-              {display.length > 0 ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                  {display.map(item => <ProductCard key={item.id} item={item} />)}
-                </div>
-              ) : (
-                <div className="bg-white border border-gray-200 rounded-xl px-6 py-10 text-center">
-                  <p className="text-j-black font-bold text-base mb-2">Sin resultados</p>
-                  <p className="text-j-steel text-sm mb-4">Intenta otra medida o consulta por WhatsApp.</p>
-                  <button onClick={() => { setBrandFilter(null); setSizeQuery('') }} className="text-j-red text-sm font-semibold hover:underline">
-                    Ver todos
-                  </button>
-                </div>
-              )}
-            </>
-          )
-        })()}
+        {/* Category-filtered product grid */}
+        {categoria && !q && isFiltered && filtered!.length > 1 && (
+          displayItems.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              {displayItems.map(item => <ProductCard key={item.id} item={item} />)}
+            </div>
+          ) : (brandFilter || sizeQuery) ? (
+            <div className="bg-white border border-gray-200 rounded-xl px-6 py-10 text-center">
+              <p className="text-j-black font-bold text-base mb-2">Sin resultados</p>
+              <p className="text-j-steel text-sm mb-4">Intenta otra medida o consulta por WhatsApp.</p>
+              <button
+                onClick={() => { setBrandFilter(null); setSizeQuery('') }}
+                className="text-j-red text-sm font-semibold hover:underline"
+              >
+                Ver todos
+              </button>
+            </div>
+          ) : null
+        )}
 
         {/* Search results — compact cards */}
         {q && isFiltered && filtered!.length > 1 && (
