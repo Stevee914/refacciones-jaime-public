@@ -297,9 +297,12 @@ function ProductCard({ item }: { item: typeof CATALOG_ITEMS[0] }) {
             onError={() => setImgFailed(true)}
           />
         ) : (
-          <div className="flex flex-col items-center gap-2">
-            <CircleDot size={40} className="text-gray-300" />
-            <span className="text-gray-400 text-xs font-medium">Sin imagen</span>
+          <div className="flex flex-col items-center justify-center gap-3 px-4 text-center w-full h-full">
+            <CircleDot size={36} className="text-gray-300 flex-shrink-0" />
+            {item.brand && (
+              <span className="text-gray-500 text-sm font-bold uppercase tracking-wider">{item.brand}</span>
+            )}
+            <span className="text-gray-400 text-xs leading-snug">{item.title}</span>
           </div>
         )}
         {/* Category badge */}
