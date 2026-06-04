@@ -18,8 +18,8 @@ import { WHATSAPP_NUMBER, WHATSAPP_MSG_CTA } from '../config'
 
 const WA_HREF = `https://wa.me/${WHATSAPP_NUMBER}?text=${WHATSAPP_MSG_CTA}`
 
-// Maps the URL categoria param to a pre-split JSON catalog file
-const CATALOG_FILE: Record<string, string> = {
+// categoria param → JSON file (used when categoria IS the subcategory name, e.g. llantas)
+const CATALOG_BY_CATEGORIA: Record<string, string> = {
   'Llanta auto':        '/catalog/llanta-auto.json',
   'Llanta camión':      '/catalog/llanta-camion.json',
   'Llanta agrícola':    '/catalog/llanta-agricola.json',
@@ -27,6 +27,48 @@ const CATALOG_FILE: Record<string, string> = {
   'Llanta industrial':  '/catalog/llanta-industrial.json',
   'Llanta cuatri-moto': '/catalog/llanta-cuatrimoto.json',
 }
+
+// parent category + sub slug → JSON file (used in hasSubFilter path)
+const CATALOG_BY_SUBCAT: Record<string, Record<string, string>> = {
+  'Filtros': {
+    'aceite':          '/catalog/filtro-aceite.json',
+    'aire':            '/catalog/filtro-aire.json',
+    'gasolina-diesel': '/catalog/filtro-gasolina.json',
+  },
+  'Suspensión': {
+    'amortiguadores':  '/catalog/amortiguadores.json',
+    'direccion':       '/catalog/suspension.json',
+    'bujes-horquillas':'/catalog/suspension.json',
+  },
+  'Clutch': {
+    'kits-completos':  '/catalog/clutch.json',
+    'collarines':      '/catalog/clutch.json',
+    'horquillas':      '/catalog/clutch.json',
+  },
+  'Baleros': {
+    'baleros-rueda':   '/catalog/baleros.json',
+    'chumaceras':      '/catalog/baleros.json',
+    'conjuntos-juegos':'/catalog/baleros.json',
+  },
+  'Bandas': {
+    'distribucion':    '/catalog/bandas.json',
+    'serpentin':       '/catalog/bandas.json',
+    'kits-completos':  '/catalog/bandas.json',
+  },
+  'Baterías': {
+    'baterias-auto':   '/catalog/baterias-auto.json',
+    'baterias-moto':   '/catalog/baterias-moto.json',
+  },
+  'Aceites': {
+    'motor':                 '/catalog/aceites.json',
+    'transmision-hidraulico':'/catalog/aceites.json',
+    'motos':                 '/catalog/aceites.json',
+    'aditivos-mantenimiento':'/catalog/aceites.json',
+  },
+}
+
+// Keep backward-compat alias for standard view usage
+const CATALOG_FILE = CATALOG_BY_CATEGORIA
 
 interface DbProduct { sku: string; name: string; marca: string; imagen_url: string | null }
 
@@ -440,7 +482,7 @@ export default function CatalogoPage() {
   const [dbProducts, setDbProducts] = useState<DbProduct[]>([])
   const [dbLoading,  setDbLoading  ] = useState(false)
 
-  // Reset filters and fetch DB products when category changes
+  // Reset filters and fetch DB products when category/sub changes
   useEffect(() => {
     setBrandFilter(null)
     setAnchoFilter('')
@@ -448,14 +490,17 @@ export default function CatalogoPage() {
     setRinFilter('')
     setDbProducts([])
 
-    const file = CATALOG_FILE[categoria]
+    // Determine which JSON file to load
+    const file = CATALOG_BY_CATEGORIA[categoria]
+      ?? CATALOG_BY_SUBCAT[categoria]?.[sub]
+      ?? null
     if (!file) return
     setDbLoading(true)
     fetch(file)
       .then(r => r.json())
       .then((data: DbProduct[]) => { setDbProducts(data); setDbLoading(false) })
       .catch(() => setDbLoading(false))
-  }, [categoria])
+  }, [categoria, sub])
 
   useEffect(() => {
     if (hasCategoryChildren) return
@@ -504,24 +549,65 @@ export default function CatalogoPage() {
             <p className="text-j-steel text-sm mt-1">{subNode.description}</p>
           </div>
 
-          {subItems.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {subItems.map(item => <ProductCard key={item.id} item={item} />)}
+          {/* DB products (when catalog file exists) */}
+          {dbLoading && (
+            <div className="flex justify-center py-20">
+              <div className="w-8 h-8 border-2 border-j-red border-t-transparent rounded-full animate-spin" />
             </div>
-          ) : (
-            <div className="bg-white border border-gray-200 rounded-xl px-6 py-10 text-center">
-              <p className="text-j-black font-bold text-base mb-2">Consulta disponibilidad</p>
-              <p className="text-j-steel text-sm mb-6 max-w-md mx-auto">{subNode.description}</p>
-              <a
-                href={waHref}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2.5 bg-j-red hover:bg-j-red-deep text-white font-bold px-6 py-3 rounded-lg transition-colors"
-              >
-                <MessageCircle size={17} />
-                Cotizar por WhatsApp
-              </a>
-            </div>
+          )}
+
+          {!dbLoading && dbProducts.length > 0 && (() => {
+            const brands = Array.from(new Set(dbProducts.map(i => i.marca).filter(Boolean))).sort() as string[]
+            const display = dbProducts.filter(i => !brandFilter || i.marca === brandFilter)
+            return (
+              <>
+                {brands.length > 1 && (
+                  <div className="bg-white border border-gray-200 rounded-xl px-4 py-3 mb-5 flex flex-wrap items-center gap-2">
+                    <span className="text-xs font-bold text-j-steel uppercase tracking-wider">Marca:</span>
+                    <select
+                      value={brandFilter ?? ''}
+                      onChange={e => setBrandFilter(e.target.value || null)}
+                      className="border border-gray-300 rounded-lg px-3 py-2 text-sm text-j-black focus:outline-none focus:ring-2 focus:ring-j-red/30 focus:border-j-red bg-white"
+                    >
+                      <option value="">Todas las marcas</option>
+                      {brands.map(b => <option key={b} value={b}>{b}</option>)}
+                    </select>
+                    {brandFilter && (
+                      <button onClick={() => setBrandFilter(null)} className="text-xs text-j-red font-semibold hover:underline">
+                        Limpiar
+                      </button>
+                    )}
+                  </div>
+                )}
+                <p className="text-j-steel text-xs mb-4">{display.length} producto{display.length !== 1 ? 's' : ''}</p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                  {display.map(item => <DbTireCard key={item.sku} product={item} />)}
+                </div>
+              </>
+            )
+          })()}
+
+          {/* Hardcoded items fallback (when no DB file for this subcategory) */}
+          {!dbLoading && dbProducts.length === 0 && (
+            subItems.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                {subItems.map(item => <ProductCard key={item.id} item={item} />)}
+              </div>
+            ) : (
+              <div className="bg-white border border-gray-200 rounded-xl px-6 py-10 text-center">
+                <p className="text-j-black font-bold text-base mb-2">Consulta disponibilidad</p>
+                <p className="text-j-steel text-sm mb-6 max-w-md mx-auto">{subNode.description}</p>
+                <a
+                  href={waHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2.5 bg-j-red hover:bg-j-red-deep text-white font-bold px-6 py-3 rounded-lg transition-colors"
+                >
+                  <MessageCircle size={17} />
+                  Cotizar por WhatsApp
+                </a>
+              </div>
+            )
           )}
 
           <div className="mt-6">
