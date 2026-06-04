@@ -937,8 +937,8 @@ export default function CatalogoPage() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
 
-        {/* Empty state */}
-        {isFiltered && filtered!.length === 0 && (
+        {/* Empty state — only show when no DB data is available or loading */}
+        {isFiltered && filtered!.length === 0 && !useDb && !dbLoading && (
           <div className="text-center py-20">
             <p className="text-j-black font-bold text-lg mb-2">No encontramos coincidencias.</p>
             <p className="text-j-steel text-sm mb-6">
