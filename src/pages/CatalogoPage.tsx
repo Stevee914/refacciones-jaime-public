@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useSearchParams, Link, useNavigate } from 'react-router-dom'
 import {
-  MessageCircle, ArrowRight, ChevronRight,
+  MessageCircle, ArrowRight, ChevronRight, X,
   CircleDot, Disc3, Truck, Car, Bike, Factory, Mountain, Leaf,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
@@ -406,7 +406,8 @@ function ProductCard({ item }: { item: typeof CATALOG_ITEMS[0] }) {
 // ── DB tire card ─────────────────────────────────────────────────────────────
 
 function DbTireCard({ product }: { product: DbProduct }) {
-  const [imgFailed, setImgFailed] = useState(false)
+  const [imgFailed,   setImgFailed  ] = useState(false)
+  const [lightbox,    setLightbox   ] = useState(false)
   const showImg = !!product.imagen_url && !imgFailed
   const size = parseDbTireSize(product.name)
   const waMsg = encodeURIComponent(
@@ -414,49 +415,101 @@ function DbTireCard({ product }: { product: DbProduct }) {
   )
   const waHref = `https://wa.me/${WHATSAPP_NUMBER}?text=${waMsg}`
 
+  // Close lightbox on Escape
+  useEffect(() => {
+    if (!lightbox) return
+    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') setLightbox(false) }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [lightbox])
+
   return (
-    <div className="group bg-white border border-gray-200 hover:border-j-orange rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 flex flex-col">
-      {/* Image area */}
-      <div className={`relative h-44 flex items-center justify-center overflow-hidden flex-shrink-0 ${showImg ? 'bg-gray-50' : 'bg-gray-100'}`}>
-        <div className="absolute top-0 left-0 right-0 h-0.5 bg-j-orange opacity-0 group-hover:opacity-100 transition-opacity" />
-        {showImg ? (
-          <img
-            src={product.imagen_url!}
-            alt={product.name}
-            className="max-h-36 max-w-[85%] object-contain"
-            onError={() => setImgFailed(true)}
-          />
-        ) : (
-          <div className="flex flex-col items-center gap-2 px-3 text-center">
-            <CircleDot size={32} className="text-gray-300" />
-            {size && (
-              <span className="text-gray-600 text-sm font-black">
-                {size.ancho}/{size.alto}R{size.rin}
-              </span>
-            )}
-          </div>
-        )}
-        {product.marca && (
-          <span className="absolute top-2 left-2 z-10 bg-j-orange text-white text-[9px] font-black tracking-widest uppercase px-2 py-0.5 rounded-full">
-            {product.marca}
-          </span>
-        )}
-      </div>
-      {/* Info */}
-      <div className="p-4 flex flex-col flex-1">
-        <p className="text-j-black font-bold text-sm leading-snug mb-1">{product.name}</p>
-        <p className="text-j-steel/60 text-[10px] font-mono mb-3">SKU: {product.sku}</p>
-        <a
-          href={waHref}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-auto inline-flex items-center justify-center gap-2 bg-j-red hover:bg-j-red-deep text-white font-bold text-xs px-3 py-2.5 rounded-lg transition-colors"
+    <>
+      <div className="group bg-white border border-gray-200 hover:border-j-orange rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 flex flex-col">
+        {/* Image area */}
+        <div
+          className={`relative h-44 flex items-center justify-center overflow-hidden flex-shrink-0 ${
+            showImg ? 'bg-gray-50 cursor-zoom-in' : 'bg-gray-100'
+          }`}
+          onClick={() => showImg && setLightbox(true)}
         >
-          <MessageCircle size={13} />
-          Cotizar por WhatsApp
-        </a>
+          <div className="absolute top-0 left-0 right-0 h-0.5 bg-j-orange opacity-0 group-hover:opacity-100 transition-opacity" />
+          {showImg ? (
+            <img
+              src={product.imagen_url!}
+              alt={product.name}
+              className="max-h-36 max-w-[85%] object-contain group-hover:scale-105 transition-transform duration-200"
+              onError={() => setImgFailed(true)}
+            />
+          ) : (
+            <div className="flex flex-col items-center gap-2 px-3 text-center">
+              <CircleDot size={32} className="text-gray-300" />
+              {size && (
+                <span className="text-gray-600 text-sm font-black">
+                  {size.ancho}/{size.alto}R{size.rin}
+                </span>
+              )}
+            </div>
+          )}
+          {product.marca && (
+            <span className="absolute top-2 left-2 z-10 bg-j-orange text-white text-[9px] font-black tracking-widest uppercase px-2 py-0.5 rounded-full">
+              {product.marca}
+            </span>
+          )}
+        </div>
+        {/* Info */}
+        <div className="p-4 flex flex-col flex-1">
+          <p className="text-j-black font-bold text-sm leading-snug mb-1">{product.name}</p>
+          <p className="text-j-steel/60 text-[10px] font-mono mb-3">SKU: {product.sku}</p>
+          <a
+            href={waHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-auto inline-flex items-center justify-center gap-2 bg-j-red hover:bg-j-red-deep text-white font-bold text-xs px-3 py-2.5 rounded-lg transition-colors"
+          >
+            <MessageCircle size={13} />
+            Cotizar por WhatsApp
+          </a>
+        </div>
       </div>
-    </div>
+
+      {/* Lightbox */}
+      {lightbox && showImg && (
+        <div
+          className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4"
+          onClick={() => setLightbox(false)}
+        >
+          <div className="relative max-w-2xl w-full bg-white rounded-2xl overflow-hidden shadow-2xl" onClick={e => e.stopPropagation()}>
+            <button
+              onClick={() => setLightbox(false)}
+              className="absolute top-3 right-3 z-10 bg-black/50 hover:bg-black/70 text-white rounded-full w-8 h-8 flex items-center justify-center transition-colors"
+            >
+              <X size={16} />
+            </button>
+            <div className="bg-gray-50 flex items-center justify-center p-6">
+              <img
+                src={product.imagen_url!}
+                alt={product.name}
+                className="max-h-[60vh] max-w-full object-contain"
+              />
+            </div>
+            <div className="px-5 py-4 border-t border-gray-100">
+              <p className="text-j-black font-bold text-sm">{product.name}</p>
+              <p className="text-j-steel/60 text-[10px] font-mono mt-0.5">SKU: {product.sku}</p>
+              <a
+                href={waHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-3 inline-flex items-center gap-2 bg-j-red hover:bg-j-red-deep text-white font-bold text-sm px-4 py-2.5 rounded-lg transition-colors"
+              >
+                <MessageCircle size={14} />
+                Cotizar por WhatsApp
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   )
 }
 
