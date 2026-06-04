@@ -18,6 +18,23 @@ import { WHATSAPP_NUMBER, WHATSAPP_MSG_CTA } from '../config'
 
 const WA_HREF = `https://wa.me/${WHATSAPP_NUMBER}?text=${WHATSAPP_MSG_CTA}`
 
+// Maps the URL categoria param to a pre-split JSON catalog file
+const CATALOG_FILE: Record<string, string> = {
+  'Llanta auto':        '/catalog/llanta-auto.json',
+  'Llanta camión':      '/catalog/llanta-camion.json',
+  'Llanta agrícola':    '/catalog/llanta-agricola.json',
+  'Llanta moto':        '/catalog/llanta-moto.json',
+  'Llanta industrial':  '/catalog/llanta-industrial.json',
+  'Llanta cuatri-moto': '/catalog/llanta-cuatrimoto.json',
+}
+
+interface DbProduct { sku: string; name: string; marca: string; imagen_url: string | null }
+
+function parseDbTireSize(name: string) {
+  const m = name.match(/^(\d{3})\s+(\d{2})\s+(\d{2})\b/)
+  return m ? { ancho: m[1], alto: m[2], rin: m[3] } : null
+}
+
 // ── Category accent colors ────────────────────────────────────────────────────
 // Each entry: [glowRgba (for radial glow), chipHex (for label dot + chips)]
 const CATEGORY_ACCENTS: Record<string, [string, string]> = {
@@ -344,6 +361,63 @@ function ProductCard({ item }: { item: typeof CATALOG_ITEMS[0] }) {
   )
 }
 
+// ── DB tire card ─────────────────────────────────────────────────────────────
+
+function DbTireCard({ product }: { product: DbProduct }) {
+  const [imgFailed, setImgFailed] = useState(false)
+  const showImg = !!product.imagen_url && !imgFailed
+  const size = parseDbTireSize(product.name)
+  const waMsg = encodeURIComponent(
+    `Hola, quiero cotizar la llanta: ${product.name} (SKU: ${product.sku})`
+  )
+  const waHref = `https://wa.me/${WHATSAPP_NUMBER}?text=${waMsg}`
+
+  return (
+    <div className="group bg-white border border-gray-200 hover:border-j-orange rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 flex flex-col">
+      {/* Image area */}
+      <div className={`relative h-44 flex items-center justify-center overflow-hidden flex-shrink-0 ${showImg ? 'bg-gray-50' : 'bg-gray-100'}`}>
+        <div className="absolute top-0 left-0 right-0 h-0.5 bg-j-orange opacity-0 group-hover:opacity-100 transition-opacity" />
+        {showImg ? (
+          <img
+            src={product.imagen_url!}
+            alt={product.name}
+            className="max-h-36 max-w-[85%] object-contain"
+            onError={() => setImgFailed(true)}
+          />
+        ) : (
+          <div className="flex flex-col items-center gap-2 px-3 text-center">
+            <CircleDot size={32} className="text-gray-300" />
+            {size && (
+              <span className="text-gray-600 text-sm font-black">
+                {size.ancho}/{size.alto}R{size.rin}
+              </span>
+            )}
+          </div>
+        )}
+        {product.marca && (
+          <span className="absolute top-2 left-2 z-10 bg-j-orange text-white text-[9px] font-black tracking-widest uppercase px-2 py-0.5 rounded-full">
+            {product.marca}
+          </span>
+        )}
+      </div>
+      {/* Info */}
+      <div className="p-4 flex flex-col flex-1">
+        <p className="text-j-black font-bold text-sm leading-snug mb-1">{product.name}</p>
+        <p className="text-j-steel/60 text-[10px] font-mono mb-3">SKU: {product.sku}</p>
+        <a
+          href={waHref}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-auto inline-flex items-center justify-center gap-2 bg-j-red hover:bg-j-red-deep text-white font-bold text-xs px-3 py-2.5 rounded-lg transition-colors"
+        >
+          <MessageCircle size={13} />
+          Cotizar por WhatsApp
+        </a>
+      </div>
+    </div>
+  )
+}
+
 // ── Page ──────────────────────────────────────────────────────────────────────
 
 export default function CatalogoPage() {
@@ -363,12 +437,24 @@ export default function CatalogoPage() {
   const [altoFilter,  setAltoFilter ] = useState('')
   const [rinFilter,   setRinFilter  ] = useState('')
 
-  // Reset filters when category changes
+  const [dbProducts, setDbProducts] = useState<DbProduct[]>([])
+  const [dbLoading,  setDbLoading  ] = useState(false)
+
+  // Reset filters and fetch DB products when category changes
   useEffect(() => {
     setBrandFilter(null)
     setAnchoFilter('')
     setAltoFilter('')
     setRinFilter('')
+    setDbProducts([])
+
+    const file = CATALOG_FILE[categoria]
+    if (!file) return
+    setDbLoading(true)
+    fetch(file)
+      .then(r => r.json())
+      .then((data: DbProduct[]) => { setDbProducts(data); setDbLoading(false) })
+      .catch(() => setDbLoading(false))
   }, [categoria])
 
   useEffect(() => {
@@ -667,35 +753,57 @@ export default function CatalogoPage() {
 
   // ── Standard catalog view ─────────────────────────────────────────────────────
 
-  // Parse standard tire size from title: "185/70R13" → { ancho, alto, rin }
+  // Parse tire size from title: "185/70R13" or "155 70 13 BRAND"
   function parseTireSize(title: string) {
-    const m = title.match(/(\d{3})\/(\d{2})R(\d{2})/i)
-    return m ? { ancho: m[1], alto: m[2], rin: m[3] } : null
+    const m1 = title.match(/(\d{3})\/(\d{2})R(\d{2})/i)
+    if (m1) return { ancho: m1[1], alto: m1[2], rin: m1[3] }
+    const m2 = title.match(/^(\d{3})\s+(\d{2})\s+(\d{2})\b/)
+    if (m2) return { ancho: m2[1], alto: m2[2], rin: m2[3] }
+    return null
   }
 
-  // Brand + dimension filter values
-  const allBrands = filtered
-    ? (Array.from(new Set(filtered.map(i => i.brand).filter(Boolean))).sort() as string[])
-    : []
+  // DB products take priority when available for this category
+  const useDb = dbProducts.length > 0
+  const srcDb  = dbProducts
+  const srcCat = filtered ?? []
+
+  const allBrands = Array.from(new Set(
+    useDb
+      ? srcDb.map(i => i.marca).filter(Boolean)
+      : srcCat.map(i => i.brand).filter(Boolean)
+  )).sort() as string[]
 
   const allAnchos = Array.from(new Set(
-    (filtered ?? []).map(i => parseTireSize(i.title)?.ancho).filter(Boolean)
+    (useDb ? srcDb.map(i => parseTireSize(i.name)) : srcCat.map(i => parseTireSize(i.title)))
+      .map(s => s?.ancho).filter(Boolean)
   )).sort() as string[]
 
   const allAltos = Array.from(new Set(
-    (filtered ?? [])
-      .filter(i => !anchoFilter || parseTireSize(i.title)?.ancho === anchoFilter)
-      .map(i => parseTireSize(i.title)?.alto).filter(Boolean)
+    (useDb ? srcDb : srcCat)
+      .filter(i => !anchoFilter || parseTireSize(useDb ? (i as DbProduct).name : (i as typeof CATALOG_ITEMS[0]).title)?.ancho === anchoFilter)
+      .map(i => parseTireSize(useDb ? (i as DbProduct).name : (i as typeof CATALOG_ITEMS[0]).title)?.alto)
+      .filter(Boolean)
   )).sort((a, b) => parseInt(a as string) - parseInt(b as string)) as string[]
 
   const allRins = Array.from(new Set(
-    (filtered ?? [])
-      .filter(i => !anchoFilter || parseTireSize(i.title)?.ancho === anchoFilter)
-      .filter(i => !altoFilter  || parseTireSize(i.title)?.alto  === altoFilter)
-      .map(i => parseTireSize(i.title)?.rin).filter(Boolean)
+    (useDb ? srcDb : srcCat)
+      .filter(i => !anchoFilter || parseTireSize(useDb ? (i as DbProduct).name : (i as typeof CATALOG_ITEMS[0]).title)?.ancho === anchoFilter)
+      .filter(i => !altoFilter  || parseTireSize(useDb ? (i as DbProduct).name : (i as typeof CATALOG_ITEMS[0]).title)?.alto  === altoFilter)
+      .map(i => parseTireSize(useDb ? (i as DbProduct).name : (i as typeof CATALOG_ITEMS[0]).title)?.rin)
+      .filter(Boolean)
   )).sort((a, b) => parseInt(a as string) - parseInt(b as string)) as string[]
 
-  const displayItems = (filtered ?? [])
+  const filteredDbItems = srcDb
+    .filter(i => !brandFilter || i.marca === brandFilter)
+    .filter(i => {
+      if (!anchoFilter && !altoFilter && !rinFilter) return true
+      const s = parseTireSize(i.name)
+      return (!anchoFilter || s?.ancho === anchoFilter) &&
+             (!altoFilter  || s?.alto  === altoFilter)  &&
+             (!rinFilter   || s?.rin   === rinFilter)
+    })
+
+  const displayItems = srcCat
     .filter(i => !brandFilter || i.brand === brandFilter)
     .filter(i => {
       if (!anchoFilter && !altoFilter && !rinFilter) return true
@@ -705,7 +813,7 @@ export default function CatalogoPage() {
              (!rinFilter   || s?.rin   === rinFilter)
     })
 
-  const showFilters  = !!(categoria && !q && filtered && filtered.length > 0)
+  const showFilters  = !!(categoria && !q && (useDb ? srcDb.length > 0 : srcCat.length > 0))
   const anyDimFilter = !!(anchoFilter || altoFilter || rinFilter)
 
   return (
@@ -838,8 +946,35 @@ export default function CatalogoPage() {
           </div>
         )}
 
-        {/* Category-filtered product grid */}
-        {categoria && !q && isFiltered && filtered!.length > 1 && (
+        {/* DB product grid (tire categories with catalog files) */}
+        {useDb && !q && (
+          dbLoading ? (
+            <div className="flex justify-center py-20">
+              <div className="w-8 h-8 border-2 border-j-red border-t-transparent rounded-full animate-spin" />
+            </div>
+          ) : filteredDbItems.length > 0 ? (
+            <>
+              <p className="text-j-steel text-xs mb-4">{filteredDbItems.length} producto{filteredDbItems.length !== 1 ? 's' : ''}</p>
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                {filteredDbItems.map(item => <DbTireCard key={item.sku} product={item} />)}
+              </div>
+            </>
+          ) : (brandFilter || anyDimFilter) ? (
+            <div className="bg-white border border-gray-200 rounded-xl px-6 py-10 text-center">
+              <p className="text-j-black font-bold text-base mb-2">Sin resultados</p>
+              <p className="text-j-steel text-sm mb-4">Intenta otra medida o consulta por WhatsApp.</p>
+              <button
+                onClick={() => { setBrandFilter(null); setAnchoFilter(''); setAltoFilter(''); setRinFilter('') }}
+                className="text-j-red text-sm font-semibold hover:underline"
+              >
+                Ver todos
+              </button>
+            </div>
+          ) : null
+        )}
+
+        {/* Category-filtered product grid (non-tire categories) */}
+        {!useDb && categoria && !q && isFiltered && filtered!.length > 1 && (
           displayItems.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {displayItems.map(item => <ProductCard key={item.id} item={item} />)}
