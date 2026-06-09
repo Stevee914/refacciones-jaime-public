@@ -941,6 +941,17 @@ export default function CatalogoPage() {
              (!altoFilter  || s?.alto  === altoFilter)  &&
              (!rinFilter   || s?.rin   === rinFilter)
     })
+    .sort((a, b) => {
+      const sa = parseTireSize(a.name)
+      const sb = parseTireSize(b.name)
+      const rinDiff = parseInt(sa?.rin ?? '99') - parseInt(sb?.rin ?? '99')
+      if (rinDiff !== 0) return rinDiff
+      const anchoDiff = parseInt(sa?.ancho ?? '0') - parseInt(sb?.ancho ?? '0')
+      if (anchoDiff !== 0) return anchoDiff
+      const altoDiff = parseInt(sa?.alto ?? '0') - parseInt(sb?.alto ?? '0')
+      if (altoDiff !== 0) return altoDiff
+      return a.name.localeCompare(b.name)
+    })
 
   const displayItems = srcCat
     .filter(i => !brandFilter || i.brand === brandFilter)
