@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useSearchParams, Link, useNavigate } from 'react-router-dom'
 import {
   MessageCircle, ArrowRight, ChevronRight, X,
@@ -965,6 +965,39 @@ export default function CatalogoPage() {
   const showFilters  = !!(categoria && !q && (useDb ? srcDb.length > 0 : srcCat.length > 0))
   const anyDimFilter = !!(anchoFilter || altoFilter || rinFilter)
 
+  // Featured products: up to 8 with images, one per brand (deterministic, sorted by brand then sku)
+  const featuredProducts = useMemo(() => {
+    const withImage = dbProducts.filter(p => p.has_image)
+    // Sort for determinism: by marca then sku
+    const sorted = [...withImage].sort((a, b) => {
+      const mb = (a.marca ?? '').localeCompare(b.marca ?? '')
+      return mb !== 0 ? mb : a.sku.localeCompare(b.sku)
+    })
+    const seen = new Set<string>()
+    const picks: DbProduct[] = []
+    // First pass: one per brand
+    for (const p of sorted) {
+      const brand = p.marca ?? ''
+      if (!seen.has(brand)) {
+        seen.add(brand)
+        picks.push(p)
+        if (picks.length === 8) break
+      }
+    }
+    // Second pass: fill remaining slots from any brand if under 8
+    if (picks.length < 8) {
+      const pickSkus = new Set(picks.map(p => p.sku))
+      for (const p of sorted) {
+        if (!pickSkus.has(p.sku)) {
+          picks.push(p)
+          pickSkus.add(p.sku)
+          if (picks.length === 8) break
+        }
+      }
+    }
+    return picks
+  }, [dbProducts])
+
   return (
     <div className="bg-j-gray min-h-screen">
 
@@ -1022,10 +1055,69 @@ export default function CatalogoPage() {
         {/* Filters: dropdowns for brand + dimensions */}
         {showFilters && (
           <div className="bg-white border border-gray-200 rounded-xl px-4 py-4 mb-5">
-            <div className="flex flex-wrap items-center gap-2">
+            {/* Mobile: label above, 2-col grid; Desktop: single flex row */}
+            <div className="sm:hidden">
+              <span className="block text-xs font-bold text-j-steel uppercase tracking-wider mb-3">Filtrar:</span>
+              <div className="grid grid-cols-2 gap-2">
+                {/* Row 1: Marca | Ancho */}
+                {allBrands.length > 1 ? (
+                  <select
+                    value={brandFilter ?? ''}
+                    onChange={e => setBrandFilter(e.target.value || null)}
+                    className="w-full min-h-[44px] border border-gray-300 rounded-lg px-3 py-2 text-sm text-j-black focus:outline-none focus:ring-2 focus:ring-j-red/30 focus:border-j-red bg-white"
+                  >
+                    <option value="">Marca</option>
+                    {allBrands.map(b => <option key={b} value={b}>{b}</option>)}
+                  </select>
+                ) : <div />}
+                {allAnchos.length > 0 ? (
+                  <select
+                    value={anchoFilter}
+                    onChange={e => { setAnchoFilter(e.target.value); setAltoFilter(''); setRinFilter('') }}
+                    className="w-full min-h-[44px] border border-gray-300 rounded-lg px-3 py-2 text-sm text-j-black focus:outline-none focus:ring-2 focus:ring-j-red/30 focus:border-j-red bg-white"
+                  >
+                    <option value="">Ancho</option>
+                    {allAnchos.map(v => <option key={v} value={v}>{v}</option>)}
+                  </select>
+                ) : <div />}
+                {/* Row 2: Alto | Rin */}
+                {allAnchos.length > 0 ? (
+                  <select
+                    value={altoFilter}
+                    onChange={e => { setAltoFilter(e.target.value); setRinFilter('') }}
+                    disabled={!anchoFilter}
+                    className="w-full min-h-[44px] border border-gray-300 rounded-lg px-3 py-2 text-sm text-j-black focus:outline-none focus:ring-2 focus:ring-j-red/30 focus:border-j-red bg-white disabled:opacity-40"
+                    title={!anchoFilter ? 'Selecciona Ancho primero' : ''}
+                  >
+                    <option value="">Alto</option>
+                    {allAltos.map(v => <option key={v} value={v}>{v}</option>)}
+                  </select>
+                ) : <div />}
+                {allAnchos.length > 0 ? (
+                  <select
+                    value={rinFilter}
+                    onChange={e => { setRinFilter(e.target.value); setAnchoFilter(''); setAltoFilter('') }}
+                    className="w-full min-h-[44px] border border-gray-300 rounded-lg px-3 py-2 text-sm text-j-black focus:outline-none focus:ring-2 focus:ring-j-red/30 focus:border-j-red bg-white"
+                  >
+                    <option value="">Rin</option>
+                    {allRins.map(v => <option key={v} value={v}>{v}</option>)}
+                  </select>
+                ) : <div />}
+              </div>
+              {(anyDimFilter || brandFilter) && (
+                <button
+                  onClick={() => { setBrandFilter(null); setAnchoFilter(''); setAltoFilter(''); setRinFilter('') }}
+                  className="mt-2 text-xs text-j-red font-semibold hover:underline"
+                >
+                  Limpiar filtros
+                </button>
+              )}
+            </div>
+
+            {/* Desktop: original flex row layout */}
+            <div className="hidden sm:flex flex-wrap items-center gap-2">
               <span className="text-xs font-bold text-j-steel uppercase tracking-wider">Filtrar:</span>
 
-              {/* Brand dropdown */}
               {allBrands.length > 1 && (
                 <select
                   value={brandFilter ?? ''}
@@ -1037,75 +1129,108 @@ export default function CatalogoPage() {
                 </select>
               )}
 
-            {/* Dimension selects */}
-            {allAnchos.length > 0 && (
-              <>
-
-                <select
-                  value={anchoFilter}
-                  onChange={e => { setAnchoFilter(e.target.value); setAltoFilter(''); setRinFilter('') }}
-                  className="border border-gray-300 rounded-lg px-3 py-2 text-sm text-j-black focus:outline-none focus:ring-2 focus:ring-j-red/30 focus:border-j-red bg-white"
-                >
-                  <option value="">Ancho</option>
-                  {allAnchos.map(v => <option key={v} value={v}>{v}</option>)}
-                </select>
-
-                <select
-                  value={altoFilter}
-                  onChange={e => { setAltoFilter(e.target.value); setRinFilter('') }}
-                  disabled={!anchoFilter}
-                  className="border border-gray-300 rounded-lg px-3 py-2 text-sm text-j-black focus:outline-none focus:ring-2 focus:ring-j-red/30 focus:border-j-red bg-white disabled:opacity-40"
-                  title={!anchoFilter ? 'Selecciona Ancho primero' : ''}
-                >
-                  <option value="">Alto</option>
-                  {allAltos.map(v => <option key={v} value={v}>{v}</option>)}
-                </select>
-
-                <select
-                  value={rinFilter}
-                  onChange={e => { setRinFilter(e.target.value); setAnchoFilter(''); setAltoFilter('') }}
-                  className="border border-gray-300 rounded-lg px-3 py-2 text-sm text-j-black focus:outline-none focus:ring-2 focus:ring-j-red/30 focus:border-j-red bg-white"
-                >
-                  <option value="">Rin</option>
-                  {allRins.map(v => <option key={v} value={v}>{v}</option>)}
-                </select>
-
-                {(anyDimFilter || brandFilter) && (
-                  <button
-                    onClick={() => { setBrandFilter(null); setAnchoFilter(''); setAltoFilter(''); setRinFilter('') }}
-                    className="text-xs text-j-red font-semibold hover:underline"
+              {allAnchos.length > 0 && (
+                <>
+                  <select
+                    value={anchoFilter}
+                    onChange={e => { setAnchoFilter(e.target.value); setAltoFilter(''); setRinFilter('') }}
+                    className="border border-gray-300 rounded-lg px-3 py-2 text-sm text-j-black focus:outline-none focus:ring-2 focus:ring-j-red/30 focus:border-j-red bg-white"
                   >
-                    Limpiar
-                  </button>
-                )}
-              </>
-            )}
+                    <option value="">Ancho</option>
+                    {allAnchos.map(v => <option key={v} value={v}>{v}</option>)}
+                  </select>
+
+                  <select
+                    value={altoFilter}
+                    onChange={e => { setAltoFilter(e.target.value); setRinFilter('') }}
+                    disabled={!anchoFilter}
+                    className="border border-gray-300 rounded-lg px-3 py-2 text-sm text-j-black focus:outline-none focus:ring-2 focus:ring-j-red/30 focus:border-j-red bg-white disabled:opacity-40"
+                    title={!anchoFilter ? 'Selecciona Ancho primero' : ''}
+                  >
+                    <option value="">Alto</option>
+                    {allAltos.map(v => <option key={v} value={v}>{v}</option>)}
+                  </select>
+
+                  <select
+                    value={rinFilter}
+                    onChange={e => { setRinFilter(e.target.value); setAnchoFilter(''); setAltoFilter('') }}
+                    className="border border-gray-300 rounded-lg px-3 py-2 text-sm text-j-black focus:outline-none focus:ring-2 focus:ring-j-red/30 focus:border-j-red bg-white"
+                  >
+                    <option value="">Rin</option>
+                    {allRins.map(v => <option key={v} value={v}>{v}</option>)}
+                  </select>
+
+                  {(anyDimFilter || brandFilter) && (
+                    <button
+                      onClick={() => { setBrandFilter(null); setAnchoFilter(''); setAltoFilter(''); setRinFilter('') }}
+                      className="text-xs text-j-red font-semibold hover:underline"
+                    >
+                      Limpiar
+                    </button>
+                  )}
+                </>
+              )}
             </div>
           </div>
         )}
 
         {/* DB product grid (tire categories with catalog files) */}
-        {useDb && !q && (
-          dbLoading ? (
-            <div className="flex justify-center py-20">
-              <div className="w-8 h-8 border-2 border-j-red border-t-transparent rounded-full animate-spin" />
+        {(useDb || dbLoading) && !q && (
+          !anyDimFilter && !brandFilter ? (
+            /* ── No filter active: featured products section ── */
+            <div>
+              <p className="text-j-black font-bold text-xl mb-1">
+                Encuentra la llanta que necesitas
+              </p>
+              <p className="text-j-steel text-sm mb-5">
+                Selecciona una medida o explora algunos de nuestros modelos disponibles.
+              </p>
+
+              <p className="text-j-steel text-[10px] font-black uppercase tracking-widest mb-4">
+                Modelos destacados
+              </p>
+
+              {dbLoading ? (
+                /* Skeleton cards */
+                <>
+                  {/* Desktop: 8 skeletons in 4-col grid; mobile: 4 in 2-col grid */}
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+                    {Array.from({ length: 8 }).map((_, i) => (
+                      <div
+                        key={i}
+                        className={`animate-pulse bg-gray-200 rounded-2xl${i >= 4 ? ' hidden lg:block' : ''}`}
+                        style={{ height: '260px' }}
+                      />
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+                  {featuredProducts.map(item => (
+                    <DbTireCard key={item.sku} product={item} />
+                  ))}
+                </div>
+              )}
+
+              <p className="text-j-steel/60 text-xs mt-5 text-center">
+                ¿Buscas otra medida? Usa los filtros para encontrar la llanta correcta.
+              </p>
             </div>
-          ) : !anyDimFilter && !brandFilter ? (
-            <div className="bg-white border border-gray-200 rounded-xl px-6 py-12 text-center">
-              <p className="text-j-black font-bold text-lg mb-2">Selecciona un filtro para ver productos</p>
-              <p className="text-j-steel text-sm">Usa los filtros de arriba para buscar por Rin, Ancho o Marca.</p>
-            </div>
-          ) : filteredDbItems.length > 0 ? (
+          ) : !dbLoading && filteredDbItems.length > 0 ? (
             <>
               <p className="text-j-steel text-xs mb-4">{filteredDbItems.length} producto{filteredDbItems.length !== 1 ? 's' : ''}</p>
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                 {filteredDbItems.map(item => <DbTireCard key={item.sku} product={item} />)}
               </div>
             </>
-          ) : (
-            <div className="bg-white border border-gray-200 rounded-xl px-6 py-10 text-center">
-              <p className="text-j-black font-bold text-base mb-2">Sin resultados</p>
-              <p className="text-j-steel text-sm mb-4">Intenta otra medida o consulta por WhatsApp.</p>
+          ) : !dbLoading ? (
+            <div className="bg-white border border-gray-200 rounded-xl px-6 py-8 text-center">
+              <p className="text-j-black font-bold text-base mb-1">
+                No encontramos llantas con esta combinación
+              </p>
+              <p className="text-j-steel text-sm mb-4">
+                Prueba otra medida o contáctanos para ayudarte a localizarla.
+              </p>
               <button
                 onClick={() => { setBrandFilter(null); setAnchoFilter(''); setAltoFilter(''); setRinFilter('') }}
                 className="text-j-red text-sm font-semibold hover:underline"
@@ -1113,7 +1238,7 @@ export default function CatalogoPage() {
                 Limpiar filtros
               </button>
             </div>
-          )
+          ) : null
         )}
 
         {/* Category-filtered product grid (non-tire categories) */}
