@@ -70,7 +70,7 @@ const CATALOG_BY_SUBCAT: Record<string, Record<string, string>> = {
 // Keep backward-compat alias for standard view usage
 const CATALOG_FILE = CATALOG_BY_CATEGORIA
 
-interface DbProduct { sku: string; name: string; marca: string; imagen_url: string | null }
+interface DbProduct { sku: string; name: string; marca: string; imagen_url: string | null; has_image: boolean }
 
 function parseDbTireSize(name: string) {
   const m = name.match(/^(\d{3})\s+(\d{2})\s+(\d{2})\b/)
@@ -610,8 +610,9 @@ export default function CatalogoPage() {
           )}
 
           {!dbLoading && dbProducts.length > 0 && (() => {
-            const brands = Array.from(new Set(dbProducts.map(i => i.marca).filter(Boolean))).sort() as string[]
-            const display = dbProducts.filter(i => !brandFilter || i.marca === brandFilter)
+            const withImage = dbProducts.filter(i => i.has_image)
+            const brands = Array.from(new Set(withImage.map(i => i.marca).filter(Boolean))).sort() as string[]
+            const display = withImage.filter(i => !brandFilter || i.marca === brandFilter)
             return (
               <>
                 {brands.length > 1 && (
@@ -903,7 +904,7 @@ export default function CatalogoPage() {
 
   // DB products take priority when available for this category
   const useDb = dbProducts.length > 0
-  const srcDb  = dbProducts
+  const srcDb  = dbProducts.filter(i => i.has_image)
   const srcCat = filtered ?? []
 
   const allBrands = Array.from(new Set(
