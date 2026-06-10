@@ -927,8 +927,6 @@ export default function CatalogoPage() {
 
   const allRins = Array.from(new Set(
     (useDb ? srcDb : srcCat)
-      .filter(i => !anchoFilter || parseTireSize(useDb ? (i as DbProduct).name : (i as typeof CATALOG_ITEMS[0]).title)?.ancho === anchoFilter)
-      .filter(i => !altoFilter  || parseTireSize(useDb ? (i as DbProduct).name : (i as typeof CATALOG_ITEMS[0]).title)?.alto  === altoFilter)
       .map(i => parseTireSize(useDb ? (i as DbProduct).name : (i as typeof CATALOG_ITEMS[0]).title)?.rin)
       .filter(Boolean)
   )).sort((a, b) => parseInt(a as string) - parseInt(b as string)) as string[]
@@ -1057,6 +1055,7 @@ export default function CatalogoPage() {
                   onChange={e => { setAltoFilter(e.target.value); setRinFilter('') }}
                   disabled={!anchoFilter}
                   className="border border-gray-300 rounded-lg px-3 py-2 text-sm text-j-black focus:outline-none focus:ring-2 focus:ring-j-red/30 focus:border-j-red bg-white disabled:opacity-40"
+                  title={!anchoFilter ? 'Selecciona Ancho primero' : ''}
                 >
                   <option value="">Alto</option>
                   {allAltos.map(v => <option key={v} value={v}>{v}</option>)}
@@ -1064,9 +1063,8 @@ export default function CatalogoPage() {
 
                 <select
                   value={rinFilter}
-                  onChange={e => setRinFilter(e.target.value)}
-                  disabled={!anchoFilter}
-                  className="border border-gray-300 rounded-lg px-3 py-2 text-sm text-j-black focus:outline-none focus:ring-2 focus:ring-j-red/30 focus:border-j-red bg-white disabled:opacity-40"
+                  onChange={e => { setRinFilter(e.target.value); setAnchoFilter(''); setAltoFilter('') }}
+                  className="border border-gray-300 rounded-lg px-3 py-2 text-sm text-j-black focus:outline-none focus:ring-2 focus:ring-j-red/30 focus:border-j-red bg-white"
                 >
                   <option value="">Rin</option>
                   {allRins.map(v => <option key={v} value={v}>{v}</option>)}
