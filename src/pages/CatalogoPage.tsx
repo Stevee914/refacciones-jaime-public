@@ -1090,6 +1090,11 @@ export default function CatalogoPage() {
             <div className="flex justify-center py-20">
               <div className="w-8 h-8 border-2 border-j-red border-t-transparent rounded-full animate-spin" />
             </div>
+          ) : !anyDimFilter && !brandFilter ? (
+            <div className="bg-white border border-gray-200 rounded-xl px-6 py-12 text-center">
+              <p className="text-j-black font-bold text-lg mb-2">Selecciona un filtro para ver productos</p>
+              <p className="text-j-steel text-sm">Usa los filtros de arriba para buscar por Rin, Ancho o Marca.</p>
+            </div>
           ) : filteredDbItems.length > 0 ? (
             <>
               <p className="text-j-steel text-xs mb-4">{filteredDbItems.length} producto{filteredDbItems.length !== 1 ? 's' : ''}</p>
@@ -1097,7 +1102,7 @@ export default function CatalogoPage() {
                 {filteredDbItems.map(item => <DbTireCard key={item.sku} product={item} />)}
               </div>
             </>
-          ) : (brandFilter || anyDimFilter) ? (
+          ) : (
             <div className="bg-white border border-gray-200 rounded-xl px-6 py-10 text-center">
               <p className="text-j-black font-bold text-base mb-2">Sin resultados</p>
               <p className="text-j-steel text-sm mb-4">Intenta otra medida o consulta por WhatsApp.</p>
@@ -1105,10 +1110,10 @@ export default function CatalogoPage() {
                 onClick={() => { setBrandFilter(null); setAnchoFilter(''); setAltoFilter(''); setRinFilter('') }}
                 className="text-j-red text-sm font-semibold hover:underline"
               >
-                Ver todos
+                Limpiar filtros
               </button>
             </div>
-          ) : null
+          )
         )}
 
         {/* Category-filtered product grid (non-tire categories) */}
