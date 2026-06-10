@@ -892,9 +892,9 @@ export default function CatalogoPage() {
 
   // ── Standard catalog view ─────────────────────────────────────────────────────
 
-  // Parse tire size from title: "185/70R13" or "155 70 13 BRAND"
+  // Parse tire size from title: "185/70R13", "175/70 R13", or "155 70 13 BRAND"
   function parseTireSize(title: string) {
-    const m1 = title.match(/(\d{3})\/(\d{2})R(\d{2})/i)
+    const m1 = title.match(/(\d{3})\/(\d{2})\s*R(\d{2})/i)
     if (m1) return { ancho: m1[1], alto: m1[2], rin: m1[3] }
     const m2 = title.match(/^(\d{3})\s+(\d{2})\s+(\d{2})\b/)
     if (m2) return { ancho: m2[1], alto: m2[2], rin: m2[3] }
