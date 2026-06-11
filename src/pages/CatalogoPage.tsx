@@ -403,6 +403,27 @@ function ProductCard({ item }: { item: typeof CATALOG_ITEMS[0] }) {
   )
 }
 
+// ── Brand badge (uses React state for img error — avoids direct DOM mutation) ─
+
+function BrandBadge({ img, label }: { img?: string; label: string }) {
+  const [failed, setFailed] = useState(false)
+  if (img && !failed) {
+    return (
+      <img
+        src={img}
+        alt={label}
+        className="h-7 object-contain opacity-70 hover:opacity-100 transition-opacity"
+        onError={() => setFailed(true)}
+      />
+    )
+  }
+  return (
+    <span className="border border-gray-200 rounded-lg px-3 py-1.5 text-j-steel text-xs font-semibold hover:border-j-red hover:text-j-red transition-colors cursor-default select-none">
+      {label}
+    </span>
+  )
+}
+
 // ── DB tire card ─────────────────────────────────────────────────────────────
 
 function DbTireCard({ product }: { product: DbProduct }) {
@@ -840,28 +861,7 @@ export default function CatalogoPage() {
               </p>
               <div className="flex flex-wrap items-center gap-3">
                 {(CATEGORY_BRANDS[catNode.name] ?? []).map(({ img, label }) =>
-                  img ? (
-                    <img
-                      key={label}
-                      src={img}
-                      alt={label}
-                      className="h-7 object-contain opacity-70 hover:opacity-100 transition-opacity"
-                      onError={(e) => {
-                        const el = e.currentTarget
-                        const badge = document.createElement('span')
-                        badge.className = 'border border-gray-200 rounded-lg px-3 py-1.5 text-j-steel text-xs font-semibold'
-                        badge.textContent = label
-                        el.parentElement?.replaceChild(badge, el)
-                      }}
-                    />
-                  ) : (
-                    <span
-                      key={label}
-                      className="border border-gray-200 rounded-lg px-3 py-1.5 text-j-steel text-xs font-semibold hover:border-j-red hover:text-j-red transition-colors cursor-default select-none"
-                    >
-                      {label}
-                    </span>
-                  )
+                  <BrandBadge key={label} img={img} label={label} />
                 )}
               </div>
             </div>
